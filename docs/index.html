@@ -437,6 +437,7 @@
   <!-- ─── Mobile Nav ────────────────────────────────── -->
   <div class="mobile-nav" show="mobileOpen">
     <span class="mobile-nav-group-label">Components</span>
+    <a route="/dnd" on:click="mobileOpen = false">Drag & Drop</a>
     <a route="/dropdown" on:click="mobileOpen = false">Dropdown</a>
     <a route="/modal" on:click="mobileOpen = false">Modal</a>
     <a route="/popover" on:click="mobileOpen = false">Popover</a>
@@ -459,6 +460,7 @@
     <!-- ─── Sidebar ───────────────────────────────── -->
     <nav class="sidebar" id="app-sidebar" aria-label="Component navigation">
       <div class="sidebar-title">Components</div>
+      <a route="/dnd"       class-active="$route.path === '/dnd'">Drag & Drop</a>
       <a route="/dropdown"  class-active="$route.path === '/dropdown'">Dropdown</a>
       <a route="/modal"     class-active="$route.path === '/modal'">Modal</a>
       <a route="/popover"   class-active="$route.path === '/popover'">Popover</a>
@@ -477,6 +479,57 @@
       <main route-view src="pages/"></main>
     </div>
   </div>
+
+  <!-- ─── Footer ─────────────────────────────────── -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-row">
+        <div class="footer-brand">
+          <div class="footer-logo">
+            <svg class="logo-img" viewBox="0 0 150 150" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <mask id="bolt-border-footer">
+                  <rect x="0" y="0" width="150" height="150" fill="white"/>
+                  <path d="m119.5 16h-54l-26 51h18l-27 67 73-67h-18z" fill="black" stroke="black" stroke-width="15" stroke-linejoin="miter"/>
+                </mask>
+              </defs>
+              <g mask="url(#bolt-border-footer)">
+                <path fill-rule="evenodd" fill="none" stroke="#FFF" stroke-width="14" d="m45 40l-35 35 35 35"/>
+                <path fill-rule="evenodd" fill="none" stroke="#FFF" stroke-width="14" d="m105 40l35 35-35 35"/>
+              </g>
+              <path fill="#0ea5e9" d="m119.5 16h-54l-26 51h18l-27 67 73-67h-18z"/>
+            </svg>
+            <span class="logo-title">No<span class="logo-dot">.</span>JS <span class="logo-label">Elements</span></span>
+          </div>
+          <p class="footer-desc">Declarative, accessible UI components for the No.JS HTML-first reactive framework. Zero JavaScript required.</p>
+        </div>
+        <div class="footer-links">
+          <span class="footer-links-heading">Links</span>
+          <a href="https://no-js.dev" target="_blank">No.JS</a>
+          <a href="https://lsp.no-js.dev" target="_blank">NoJS LSP</a>
+          <a href="https://www.npmjs.com/package/@erickxavier/nojs-mcp" target="_blank">NoJS MCP</a>
+          <a href="https://github.com/ErickXavier/nojs-elements" target="_blank">GitHub</a>
+          <a href="https://discord.gg/CaSbGYg3xY" target="_blank">Discord</a>
+        </div>
+      </div>
+      <div class="footer-divider"></div>
+      <div class="footer-bottom">
+        <span>2026 NoJS Elements - MIT License</span>
+        <span class="footer-version">NoJS Elements v1.11.0</span>
+        <a href="https://no-js.dev" target="_blank" class="powered-badge">
+          Powered by
+          <svg version="1.2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 150" width="150" height="150">
+            <g>
+              <path fill-rule="evenodd" fill="none" stroke="currentColor" stroke-width="14" d="m45 40l-35 35 35 35"/>
+              <path fill-rule="evenodd" fill="none" stroke="currentColor" stroke-width="14" d="m105 40l35 35-35 35"/>
+            </g>
+            <path fill="#0ea5e9" d="m119.5 16h-54l-26 51h18l-27 67 73-67h-18z"/>
+          </svg>
+          No.JS
+        </a>
+      </div>
+    </div>
+  </footer>
 
   <script src="https://cdn.no-js.dev/"></script>
   <script src="https://cdn-elements.no-js.dev/"></script>

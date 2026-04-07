@@ -223,7 +223,7 @@ export function registerDragList(NoJS) {
         rejectClass.split(/\s+/).filter(Boolean).forEach((c) => el.classList.remove(c));
 
         e.preventDefault();
-        if (e.dataTransfer) e.dataTransfer.dropEffect = copyMode ? "copy" : "move";
+        if (e.dataTransfer) e.dataTransfer.dropEffect = _dndState.dragging.effect || (copyMode ? "copy" : "move");
 
         const idx = _calcDropIndex(el, e.clientX, e.clientY, sortDir);
         if (placeholderAttr) {

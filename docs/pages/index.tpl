@@ -235,11 +235,17 @@
 </section>
 
 <div class="home-grid-header">
-  <h2>11 Ready-to-Use Components</h2>
+  <h2>12 Ready-to-Use Components</h2>
   <p>Drop them into any No.JS project with a single attribute.</p>
 </div>
 
 <div class="home-grid">
+  <a class="card" route="/dnd">
+    <h2>Drag & Drop</h2>
+    <p>Sortable lists, Kanban transfers, multi-select, typed zones, and placeholders.</p>
+    <span class="tag">drag · drop · drag-list · drag-multiple</span>
+  </a>
+
   <a class="card" route="/dropdown">
     <h2>Dropdown</h2>
     <p>Accessible dropdown menus with keyboard navigation and position variants.</p>
@@ -306,8 +312,4 @@
     <span class="tag">tree · branch · subtree</span>
   </a>
 
-  <div class="card card-placeholder">
-    <h2>More to come...</h2>
-    <p>New elements are being crafted. Stay tuned.</p>
-  </div>
 </div>

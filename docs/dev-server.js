@@ -4,7 +4,7 @@ const path = require('path');
 
 const START_PORT = 3000;
 const MAX_PORT = 3010;
-const DOCS = path.join(__dirname, 'examples');
+const DOCS = __dirname;
 const PROJECT = path.resolve(__dirname, '..');
 const NOJS_BUILD = path.join(PROJECT, '..', 'NoJS', 'dist', 'iife', 'no.js');
 const ELEMENTS_BUILD = path.join(PROJECT, 'dist', 'iife', 'nojs-elements.js');
@@ -12,6 +12,7 @@ const ELEMENTS_BUILD = path.join(PROJECT, 'dist', 'iife', 'nojs-elements.js');
 const CDN_PATTERN = /https:\/\/cdn\.no-js\.dev\//g;
 const LOCAL_NOJS = '/__local__/no.js';
 const LOCAL_ELEMENTS = '/__local__/nojs-elements.js';
+const CDN_ELEMENTS_PATTERN = /https:\/\/cdn-elements\.no-js\.dev\//g;
 const ELEMENTS_PATTERN = /\/dist\/iife\/nojs-elements\.js/g;
 
 const MIME = {
@@ -97,6 +98,7 @@ function serveFile(filePath, res) {
       if (err) { res.writeHead(500); res.end('Error'); return; }
       const rewritten = html
         .replace(CDN_PATTERN, LOCAL_NOJS)
+        .replace(CDN_ELEMENTS_PATTERN, LOCAL_ELEMENTS)
         .replace(ELEMENTS_PATTERN, LOCAL_ELEMENTS);
       res.writeHead(200, { 'Content-Type': 'text/html' });
       res.end(rewritten);
@@ -124,7 +126,7 @@ function tryListen(port) {
       server.listen(port, () => {
         console.log(`\n  \uD83D\uDE80 NoJS-Elements Docs \u2014 http://localhost:${port}`);
         console.log(`  \u26A1 cdn.no-js.dev \u2192 local NoJS build (on-the-fly rewrite)`);
-        console.log(`  \u26A1 /dist/iife/   \u2192 local Elements build (on-the-fly rewrite)`);
+        console.log(`  \u26A1 cdn-elements.no-js.dev \u2192 local Elements build (on-the-fly rewrite)`);
         console.log(`  \uD83D\uDCC1 NoJS:     ${NOJS_BUILD}`);
         console.log(`  \uD83D\uDCC1 Elements: ${ELEMENTS_BUILD}\n`);
       });
