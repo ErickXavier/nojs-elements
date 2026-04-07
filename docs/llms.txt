@@ -1,0 +1,43 @@
+# NoJS Elements
+
+> NoJS Elements is a UI element plugin library for the No.JS HTML-first reactive framework. 12 declarative, accessible components — zero JavaScript required from developers. Everything is driven by HTML attributes. Requires No.JS >= 1.11.0.
+
+NoJS Elements provides drag-and-drop, tooltips, popovers, modals, dropdowns, toasts, tabs, trees, steppers, skeletons, split panes, and sortable tables. Each element auto-registers via `NoJS.use(NojsElements)`, injects scoped CSS (`.nojs-*` classes), and adds full ARIA accessibility and keyboard navigation out of the box.
+
+## Installation
+
+- [Getting Started](https://elements.no-js.dev/): NPM install, CDN script tag, ESM/IIFE usage, peer dependency on No.JS
+
+## Interaction Elements
+
+- [Dropdown](https://elements.no-js.dev/dropdown): `dropdown`, `dropdown-toggle`, `dropdown-menu`, `dropdown-item`; Popover API light-dismiss, keyboard navigation, disabled items
+- [Modal](https://elements.no-js.dev/modal): `modal`, `modal-open`, `modal-close`; focus trap, stacking/nesting, backdrop control, Escape disable, template usage
+- [Popover](https://elements.no-js.dev/popover): `popover`, `popover-trigger`, `popover-dismiss`; native Popover API, flip logic, proximity-based triggers
+
+## Feedback Elements
+
+- [Toast](https://elements.no-js.dev/toast): `toast-container`, `toast` directive, `$toast()` global function; 6 positions, auto-dismiss, types (info/success/warning/error)
+- [Tooltip](https://elements.no-js.dev/tooltip): `tooltip` with position, delay, and disabled state; viewport-aware positioning
+
+## Layout Elements
+
+- [Tabs](https://elements.no-js.dev/tabs): `tabs`, `tab`, `panel`; 4 positions (top/bottom/left/right), disabled tabs, roving tabindex
+- [Split / Pane](https://elements.no-js.dev/split): `split`, `pane`; horizontal/vertical, min/max constraints, collapsible, persisted layout via localStorage
+- [Tree](https://elements.no-js.dev/tree): `tree`, `branch`, `subtree`; expand/collapse, selection, typeahead search, dynamic data binding
+
+## Data & Progress Elements
+
+- [Sortable Table](https://elements.no-js.dev/table): `sortable`, `sort`, `fixed-header`, `fixed-col`; string/number/date sorting, sticky headers and columns, 3-state cycling
+- [Stepper](https://elements.no-js.dev/stepper): `stepper`, `step`; linear/free mode, validation, `$stepper` API (next/prev/goTo), progress indicator
+- [Skeleton](https://elements.no-js.dev/skeleton): `skeleton` with text/circle/rect types, multi-line, shimmer animation, reactive loading state
+
+## Reference
+
+- [Full Documentation](https://elements.no-js.dev/llms-full.txt): Complete documentation for all 12 elements in a single file for deep context
+
+## Ecosystem
+
+- [No.JS Framework](https://no-js.dev/): The core HTML-first reactive framework (required peer dependency)
+- [No.JS Full Docs](https://no-js.dev/llms-full.txt): Complete No.JS framework documentation
+- [npm](https://www.npmjs.com/package/@erickxavier/nojs-elements): Install via npm
+- [GitHub](https://github.com/ErickXavier/nojs-elements): Source code, issues, and contributions

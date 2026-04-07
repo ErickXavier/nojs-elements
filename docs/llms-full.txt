@@ -1,0 +1,1664 @@
+# NoJS Elements Complete Documentation
+
+> NoJS Elements is a UI element plugin library for the No.JS HTML-first reactive framework. 12 declarative, accessible components — zero JavaScript required from developers. Everything is driven by HTML attributes. Requires No.JS >= 1.11.0.
+
+NoJS Elements provides drag-and-drop, tooltips, popovers, modals, dropdowns, toasts, tabs, trees, steppers, skeletons, split panes, and sortable tables. Each element auto-registers via `NoJS.use(NojsElements)`, injects scoped CSS (`.nojs-*` classes), and adds full ARIA accessibility and keyboard navigation out of the box.
+
+## Table of Contents
+
+### Installation
+- [Getting Started](#getting-started) — NPM, CDN, ESM usage
+
+### Interaction Elements
+- [Drag & Drop](#drag-and-drop) — `drag`, `drop`, `drag-list`, `drag-multiple`
+- [Dropdown](#dropdown) — `dropdown`, `dropdown-toggle`, `dropdown-menu`, `dropdown-item`
+- [Modal](#modal) — `modal`, `modal-open`, `modal-close`
+
+### Feedback Elements
+- [Toast](#toast-notifications) — `toast-container`, `toast`, `$toast()`
+- [Tooltip](#tooltip) — `tooltip`, position, delay, disabled
+- [Popover](#popover) — `popover`, `popover-trigger`, `popover-dismiss`
+
+### Layout Elements
+- [Tabs](#tabs) — `tabs`, `tab`, `panel`
+- [Split / Pane](#split--pane) — `split`, `pane`
+- [Tree](#tree) — `tree`, `branch`, `subtree`
+
+### Data & Progress Elements
+- [Sortable Table](#sortable-table) — `sortable`, `sort`, `fixed-header`, `fixed-col`
+- [Stepper](#stepper) — `stepper`, `step`, `$stepper` API
+- [Skeleton](#skeleton) — `skeleton`, text/circle/rect types
+
+---
+
+# Getting Started
+
+## Installation
+
+### NPM
+
+```bash
+npm install @erickxavier/nojs-elements
+```
+
+### CDN
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/@erickxavier/nojs-elements/dist/iife/nojs-elements.js"></script>
+```
+
+## Usage
+
+### ESM
+
+```javascript
+import NoJS from '@erickxavier/no-js';
+import NojsElements from '@erickxavier/nojs-elements';
+
+NoJS.use(NojsElements);
+```
+
+### CDN (Script Tag)
+
+```html
+<script src="https://cdn.no-js.dev/"></script>
+<script src="https://cdn.jsdelivr.net/npm/@erickxavier/nojs-elements/dist/iife/nojs-elements.js"></script>
+<script>
+  NoJS.use(NojsElements);
+</script>
+```
+
+## Peer Dependency
+
+This plugin requires **No.JS >= 1.11.0** as a peer dependency.
+
+## Elements Overview
+
+| Element | Directives | Description |
+|---------|-----------|-------------|
+| Drag & Drop | `drag`, `drop`, `drag-list`, `drag-multiple` | Declarative drag-and-drop with sortable lists and multi-select |
+| Tooltip | `tooltip` | Positioned tooltips with configurable delay and placement |
+| Popover | `popover`, `popover-trigger`, `popover-dismiss` | Rich content popovers with trigger and dismiss controls |
+| Modal | `modal`, `modal-open`, `modal-close` | Accessible dialog modals with focus trap and backdrop |
+| Dropdown | `dropdown`, `dropdown-toggle`, `dropdown-menu`, `dropdown-item` | Keyboard-navigable dropdown menus |
+| Toast | `toast-container`, `toast` | Notification toasts with position, type, duration, and auto-dismiss |
+| Tabs | `tabs`, `tab`, `panel`, `tab-disabled`, `tab-position` | Accessible tabbed interfaces with keyboard navigation |
+| Tree | `tree`, `branch`, `subtree` | Collapsible tree views with nested branches |
+| Stepper | `stepper`, `step` | Multi-step wizards and progress indicators |
+| Skeleton | `skeleton` | Loading placeholder skeletons |
+| Split / Pane | `split`, `pane` | Resizable split panels (horizontal or vertical) |
+| Sortable Table | `sortable`, `sort`, `fixed-header`, `fixed-col` | Column sorting with fixed headers and columns |
+
+---
+
+# Drag and Drop
+
+> The DnD module is registered automatically when using `NoJS.use(NojsElements)` -- no separate registration is needed.
+
+## `drag` — Make an Element Draggable
+
+```html
+<!-- Basic draggable -->
+<div drag="item">Drag me</div>
+
+<!-- With type (for filtering drop zones) -->
+<div drag="task" drag-type="task">Task card</div>
+
+<!-- With handle (only the grip icon starts a drag) -->
+<div drag="item" drag-handle=".grip">
+  <span class="grip">&#x2801;&#x2801;</span>
+  <span bind="item.name"></span>
+</div>
+
+<!-- Disabled state (reactive) -->
+<div drag="item" drag-disabled="isLocked">Locked item</div>
+```
+
+### Drag Attributes
+
+| Attribute | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `drag` | expression | *required* | The value being dragged |
+| `drag-type` | string | `"default"` | Named type — only matching `drop-accept` zones respond |
+| `drag-effect` | `"copy"` \| `"move"` \| `"link"` | `"move"` | Maps to `dataTransfer.effectAllowed` |
+| `drag-handle` | CSS selector | — | Restricts the grab area to a child element |
+| `drag-image` | CSS selector \| `"none"` | — | Custom drag ghost element |
+| `drag-image-offset` | `"x,y"` | `"0,0"` | Pixel offset for custom drag image |
+| `drag-disabled` | expression | `false` | When truthy, disables dragging |
+| `drag-class` | string | `"nojs-dragging"` | Class added while dragging |
+| `drag-ghost-class` | string | — | Class added to the drag image element |
+| `drag-group` | string | — | Group name for multi-select |
+
+## `drop` — Define a Drop Zone
+
+```html
+<!-- Basic drop zone -->
+<div drop="items = [...items, $drag]"
+     drop-accept="task">
+  Drop tasks here
+</div>
+
+<!-- With sortable index -->
+<div drop="items.splice($dropIndex, 0, $drag)"
+     drop-accept="task"
+     drop-sort="vertical"
+     drop-placeholder="auto">
+</div>
+
+<!-- Max capacity -->
+<div drop="slots = [...slots, $drag]"
+     drop-accept="*"
+     drop-max="3">
+  Max 3 items
+</div>
+```
+
+### Drop Attributes
+
+| Attribute | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `drop` | statement | *required* | Expression executed on drop |
+| `drop-accept` | string (comma-separated) | `"default"` | Accepted `drag-type`(s). Use `"*"` for any |
+| `drop-effect` | `"copy"` \| `"move"` \| `"link"` | `"move"` | Maps to `dataTransfer.dropEffect` |
+| `drop-class` | string | `"nojs-drag-over"` | Class added when valid item hovers |
+| `drop-reject-class` | string | `"nojs-drop-reject"` | Class added when item is rejected (wrong type or max exceeded) |
+| `drop-disabled` | expression | `false` | When truthy, disables dropping |
+| `drop-max` | expression (number) | `Infinity` | Max items the zone accepts |
+| `drop-sort` | `"vertical"` \| `"horizontal"` \| `"grid"` | — | Enables sortable reorder by position |
+| `drop-placeholder` | template ID \| `"auto"` | — | Shows a placeholder at insertion point |
+| `drop-placeholder-class` | string | `"nojs-drop-placeholder"` | Class for the placeholder |
+| `drop-settle-class` | string | `"nojs-drop-settle"` | Custom CSS class for the settle animation |
+| `drop-empty-class` | string | `"nojs-drag-list-empty"` | Custom CSS class for empty state on drop zone |
+
+## `drag-list` — Sortable List
+
+High-level shorthand for sortable lists bound to arrays. Combines `each` + `drag` + `drop` in one element.
+
+```html
+<!-- Basic sortable list -->
+<div drag-list="tasks"
+     template="task-tpl"
+     drag-list-key="id"
+     drop-sort="vertical">
+</div>
+
+<!-- Two-list transfer (Kanban) -->
+<div state="{ todo: [...], done: [] }">
+  <div drag-list="todo"
+       template="task-tpl"
+       drag-list-key="id"
+       drag-type="task"
+       drop-accept="task"
+       drop-sort="vertical"
+       drag-list-remove
+       on:reorder="console.log('reordered')">
+  </div>
+
+  <div drag-list="done"
+       template="task-tpl"
+       drag-list-key="id"
+       drag-type="task"
+       drop-accept="task"
+       drop-sort="vertical"
+       drag-list-remove
+       on:receive="console.log('received', $event.detail.item)">
+  </div>
+</div>
+
+<template id="task-tpl">
+  <div class="card">
+    <span bind="item.title"></span>
+  </div>
+</template>
+```
+
+### Drag-List Attributes
+
+| Attribute | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `drag-list` | path | *required* | Path to array in state |
+| `template` | template ID | — | Template for each item (same as `each`) |
+| `drag-list-key` | property name | — | Unique key per item for stable identity |
+| `drag-list-item` | variable name | `"item"` | Loop variable name in template |
+| `drop-sort` | `"vertical"` \| `"horizontal"` \| `"grid"` | `"vertical"` | Layout direction |
+| `drop-accept` | string | *self* | Types accepted (defaults to same list only) |
+| `drag-list-copy` | boolean attr | — | Copy items instead of moving |
+| `drag-list-remove` | boolean attr | — | Remove items when dragged out |
+| `drag-disabled` | expression | `false` | Disables dragging from this list |
+| `drop-disabled` | expression | `false` | Disables dropping into this list |
+| `drop-max` | expression (number) | `Infinity` | Max items allowed |
+| `drop-settle-class` | string | `"nojs-drop-settle"` | Custom CSS class for the settle animation |
+| `drop-empty-class` | string | `"nojs-drag-list-empty"` | Custom CSS class for empty state on drag-list |
+| `drop-placeholder` | template ID \| `"auto"` | — | Shows a placeholder where the item will be dropped |
+
+### Drag-List Events
+
+| Event | `$event.detail` | Description |
+|-------|-----------------|-------------|
+| `on:reorder` | `{ list, item, from, to }` | Item reordered within same list |
+| `on:receive` | `{ list, item, from, fromList }` | Item received from another list |
+| `on:remove` | `{ list, item, index }` | Item removed (dragged out) |
+
+## `drag-multiple` — Multi-Select
+
+Enables click-to-select before dragging multiple items as a group.
+
+```html
+<div each="card in cards" template="cardTpl" style="display:contents"></div>
+
+<template id="cardTpl">
+  <div drag="card"
+       drag-type="card"
+       drag-group="kanban"
+       drag-multiple>
+    <span bind="card.title"></span>
+  </div>
+</template>
+```
+
+| Attribute | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `drag-multiple` | boolean attr | — | Enables click-to-select |
+| `drag-multiple-class` | string | `"nojs-selected"` | Class added to selected items |
+| `drag-group` | string | *required* | Group name — all selected items move together |
+
+- **Click** selects a single item (replaces previous selection)
+- **Ctrl/Cmd+Click** adds to selection
+- **Escape** clears the selection
+- When dragging a selected item, `$drag` becomes an **array** of all selected items
+
+## Implicit Variables
+
+Available inside `drop` expressions:
+
+| Variable | Type | Description |
+|----------|------|-------------|
+| `$drag` | any | The dragged value. Array if multi-select |
+| `$dragType` | string | The `drag-type` of the item |
+| `$dragEffect` | string | The `drag-effect` |
+| `$dropIndex` | number | Insertion index within the drop zone |
+| `$source` | object \| null | `{ list, index, el }` — source info |
+| `$target` | object \| null | `{ list, index, el }` — target info |
+
+## DnD CSS Classes
+
+| Class | When applied |
+|-------|-------------|
+| `.nojs-dragging` | On the source element while dragging |
+| `.nojs-drag-over` | On the drop zone while a valid item hovers |
+| `.nojs-drop-reject` | On the drop zone when the item is rejected (wrong type or max exceeded) |
+| `.nojs-drop-placeholder` | On the insertion placeholder |
+| `.nojs-selected` | On multi-selected items |
+| `.nojs-drop-settle` | Brief settle animation on drop |
+| `.nojs-drag-list-empty` | On a `drag-list` when it has no items |
+
+## DnD Accessibility
+
+- `draggable="true"` on drag sources
+- `aria-grabbed="true/false"` reflecting drag state
+- `aria-dropeffect` on drop zones
+- `role="listbox"` on `drag-list` containers
+- `role="option"` on `drag-list` items
+- `tabindex="0"` for keyboard access
+- **Space** to grab, **Escape** to cancel, **Arrow keys** to navigate, **Enter** to drop
+
+---
+
+# Tooltip
+
+## `tooltip` — Show a Tooltip on Hover/Focus
+
+```html
+<!-- Basic tooltip -->
+<button tooltip="Save your changes">Save</button>
+
+<!-- Positioned below -->
+<button tooltip="More options" tooltip-position="bottom">Menu</button>
+
+<!-- Custom delay (500ms) -->
+<button tooltip="Delete this item" tooltip-delay="500">Delete</button>
+
+<!-- Tooltip on an icon -->
+<span tooltip="Notifications" tooltip-position="right">&#x1F514;</span>
+```
+
+### Tooltip Attributes
+
+| Attribute | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `tooltip` | string | *required* | The text content displayed in the tooltip |
+| `tooltip-position` | `"top"` \| `"bottom"` \| `"left"` \| `"right"` | `"top"` | Placement relative to the trigger element |
+| `tooltip-delay` | number (ms) | `300` | Delay in milliseconds before the tooltip appears |
+| `tooltip-disabled` | expression | — | Reactive boolean expression. When truthy, prevents tooltip from showing |
+
+### Tooltip CSS Classes
+
+| Class | When Applied |
+|-------|-------------|
+| `.nojs-tooltip` | On the generated tooltip element (injected via `<style data-nojs-tooltip>`) |
+
+### Tooltip Accessibility
+
+- `role="tooltip"` on the tooltip element
+- `aria-hidden="true/false"` reflecting visibility state
+- `aria-describedby` on the trigger, pointing to the tooltip `id`
+- **Escape** dismisses a visible tooltip when the trigger has focus
+- Tooltips show on `focusin` and hide on `focusout`, making them keyboard-accessible
+
+### Tooltip Positioning
+
+Tooltips are positioned using viewport-aware calculations:
+1. Placed relative to the trigger based on the `tooltip-position` attribute
+2. An 8px gap separates the tooltip from the trigger
+3. The position is clamped to keep a 4px margin from viewport edges
+
+---
+
+# Popover
+
+## `popover` — Declare Popover Content
+
+```html
+<!-- Popover with trigger and dismiss -->
+<button popover-trigger="user-menu">Account</button>
+
+<div popover="user-menu">
+  <nav>
+    <a href="/profile">Profile</a>
+    <a href="/settings">Settings</a>
+    <button popover-dismiss>Close</button>
+  </nav>
+</div>
+
+<!-- Popover positioned to the right -->
+<button popover-trigger="help-tip">?</button>
+
+<div popover="help-tip" popover-position="right">
+  <p>Click here for more information about this feature.</p>
+  <button popover-dismiss>Got it</button>
+</div>
+```
+
+### Popover Attributes
+
+| Attribute | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `popover` | string (ID) | auto | Unique ID linking this element to its trigger(s). Auto-generated if omitted |
+| `popover-position` | `"top"` \| `"bottom"` \| `"left"` \| `"right"` | `"bottom"` | Placement relative to the trigger element |
+
+## `popover-trigger` — Open a Popover
+
+Binds a click handler that toggles the target popover open/closed. When no ID is provided, it finds the nearest popover in the same scope automatically (proximity-based).
+
+```html
+<!-- Explicit ID -->
+<button popover-trigger="my-popover">Toggle</button>
+
+<!-- Proximity-based (finds nearest popover sibling) -->
+<button popover-trigger>Toggle</button>
+```
+
+| Attribute | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `popover-trigger` | string (ID) | auto | The `popover` ID to toggle. Finds nearest popover if omitted |
+
+## `popover-dismiss` — Close a Popover from Inside
+
+Place inside a `[popover]` element. On click, it closes the closest ancestor popover.
+
+```html
+<div popover="info-panel">
+  <p>Some content here.</p>
+  <button popover-dismiss>Dismiss</button>
+</div>
+```
+
+### Popover CSS Classes
+
+| Class | When Applied |
+|-------|-------------|
+| `.nojs-popover` | On popover elements (injected via `<style data-nojs-popover>`) |
+
+### Popover Accessibility
+
+- `aria-haspopup="true"` on popover triggers
+- `aria-expanded="true/false"` on triggers, synced with open/close state
+- `aria-controls` on triggers, pointing to the popover ID
+- Uses the native Popover API (`popover="auto"`), which provides **light dismiss** — clicking outside closes it automatically
+
+### Popover Positioning
+
+Popovers are positioned using viewport-aware calculations:
+1. Placed relative to the trigger based on the `popover-position` attribute
+2. An 8px gap separates the popover from the trigger
+3. Flip logic: if the popover overflows the viewport, it flips to the opposite side
+4. The position is clamped to keep a 4px margin from viewport edges
+
+---
+
+# Modal
+
+## `modal` — Declare a Modal Dialog
+
+Uses the native Popover API (`popover="manual"`) for overlay behavior, combined with focus trapping, stacking z-index, and ARIA attributes.
+
+```html
+<!-- Basic modal -->
+<button modal-open="confirm-delete">Delete account</button>
+
+<div modal="confirm-delete">
+  <h2>Are you sure?</h2>
+  <p>This action cannot be undone.</p>
+  <button modal-close>Cancel</button>
+  <button modal-close on:click="deleteAccount()">Confirm</button>
+</div>
+
+<!-- Modal with dynamic NoJS content -->
+<button modal-open="edit-user">Edit Profile</button>
+
+<div modal="edit-user" modal-class="dialog-wide">
+  <h2>Edit <span bind="user.name"></span></h2>
+  <form>
+    <input model="user.name" />
+    <input model="user.email" />
+    <button modal-close on:click="save()">Save</button>
+    <button modal-close>Cancel</button>
+  </form>
+</div>
+
+<!-- Modal with Escape disabled -->
+<div modal="critical-action" modal-escape="false">
+  <h2>Processing...</h2>
+  <p>Please wait while we complete the operation.</p>
+  <button modal-close>Done</button>
+</div>
+
+<!-- Nested modals -->
+<button modal-open="outer-modal">Open</button>
+
+<div modal="outer-modal">
+  <h2>Outer Modal</h2>
+  <p>This is the first modal.</p>
+  <button modal-open="inner-modal">Open Inner</button>
+  <button modal-close>Close</button>
+</div>
+
+<div modal="inner-modal">
+  <h2>Inner Modal</h2>
+  <p>This is a nested modal. It stacks above the outer one.</p>
+  <button modal-close>Close Inner</button>
+</div>
+
+<!-- Modal without backdrop -->
+<div modal="no-backdrop" modal-backdrop="false">
+  <h2>Transparent Overlay</h2>
+  <p>No dark backdrop behind this modal.</p>
+  <button modal-close>Close</button>
+</div>
+```
+
+### Modal Attributes
+
+| Attribute | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `modal` | string (ID) | — | Unique ID linking this modal to its triggers. When the attribute is empty (no value), a unique ID is auto-generated |
+| `modal-class` | string | — | Additional CSS class(es) applied while the modal is open |
+| `modal-escape` | `"true"` \| `"false"` | `"true"` | Set to `"false"` to disable closing with Escape key and prevent backdrop click from closing |
+| `modal-backdrop` | `"true"` \| `"false"` | `"true"` | Set to `"false"` to remove the dark backdrop overlay |
+
+## `modal-open` — Open a Modal
+
+Binds a click handler that opens the target modal by ID. Pushes the modal onto the stack for nested modal support and stores the trigger reference for focus restoration.
+
+```html
+<button modal-open="my-dialog">Open Dialog</button>
+
+<!-- Any element can be a trigger -->
+<a href="#" modal-open="help-modal">Need help?</a>
+```
+
+| Attribute | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `modal-open` | string (ID) | — | The `modal` ID to open. Without a value, finds the nearest modal in the same scope (proximity-based) |
+
+## `modal-close` — Close a Modal
+
+Without a value, closes the closest ancestor modal. With a value, closes the specific modal by ID (useful for closing from outside the modal).
+
+```html
+<!-- Close the parent modal -->
+<button modal-close>Cancel</button>
+
+<!-- Close a specific modal by ID (from anywhere) -->
+<button modal-close="settings-modal">Close Settings</button>
+```
+
+| Attribute | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `modal-close` | string (ID) \| empty | — | Without value: closes closest ancestor `[modal]`. With value: closes the modal with that ID |
+
+### Modal CSS Classes
+
+| Class | When Applied |
+|-------|-------------|
+| `.nojs-modal` | On all modal elements |
+| `.nojs-modal::backdrop` | Native backdrop overlay (dark semi-transparent) |
+
+Built-in modal styles:
+
+```css
+.nojs-modal {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  margin: 0;
+  border: none;
+  padding: 0;
+  max-width: 100dvw;
+  max-height: 100dvh;
+  background: transparent;
+}
+.nojs-modal::backdrop {
+  background: rgb(0 0 0 / 0.5);
+}
+.nojs-modal[data-nojs-no-backdrop]::backdrop {
+  background: transparent;
+}
+```
+
+### Modal Template Usage
+
+Define a `<template>` containing a `<div modal>` and instantiate it with `use` and `var-*` attributes to create parameterized modals:
+
+```html
+<template id="confirm-tpl">
+  <div modal>
+    <h2 bind="title"></h2>
+    <p bind="message"></p>
+    <button modal-close>Cancel</button>
+    <button modal-close on:click="onConfirm()">Confirm</button>
+  </div>
+</template>
+
+<div use="confirm-tpl"
+     var-title="'Delete account?'"
+     var-message="'This action cannot be undone.'"
+     var-onConfirm="deleteAccount">
+</div>
+```
+
+### Modal Stacking (Nested Modals)
+
+Modals are managed with an internal stack. Each new modal opens above the previous one:
+- Base z-index starts at `10000`
+- Each stacked modal increments by `1` (10001, 10002, ...)
+- When a modal closes, it is removed from the stack and focus returns to its trigger
+
+### Modal Accessibility
+
+- `role="dialog"` on the modal element
+- `aria-modal="true"` on the modal element
+- `aria-labelledby` on the modal, pointing to the first heading (`h1`-`h6`) inside
+- `aria-haspopup="dialog"` on trigger buttons (`modal-open`)
+- `aria-expanded="true/false"` on triggers, synced with open/close state
+- `aria-controls` on triggers, pointing to the modal element's `id`
+- Auto-generated `id` on the modal (`nojs-modal-{name}`) if none is set
+- `data-modal-id` attribute set on the modal element for identification
+- Auto-generated `id` on the first heading for `aria-labelledby` linking
+
+### Modal Keyboard Navigation
+
+- **Tab** cycles forward through focusable elements inside the modal (focus trap)
+- **Shift+Tab** cycles backward through focusable elements
+- **Escape** closes the topmost modal (unless `modal-escape="false"`)
+- On open, focus moves to the first focusable element inside the modal
+- On close, focus returns to the trigger element that opened the modal
+
+### Modal Focus Trap
+
+The focus trap considers these elements focusable:
+- `a[href]`
+- `button:not([disabled])`
+- `input:not([disabled])`
+- `select:not([disabled])`
+- `textarea:not([disabled])`
+- `[tabindex]:not([tabindex="-1"])`
+
+Only visible elements (`offsetParent !== null`) are included in the tab cycle.
+
+---
+
+# Dropdown
+
+## `dropdown` — Container
+
+Wraps a toggle, menu, and items into a single dropdown unit. Uses the native Popover API for light-dismiss (clicking outside closes the menu automatically).
+
+```html
+<!-- Basic dropdown -->
+<div dropdown>
+  <button dropdown-toggle>Options</button>
+  <ul dropdown-menu>
+    <li dropdown-item>Edit</li>
+    <li dropdown-item>Duplicate</li>
+    <li dropdown-item>Delete</li>
+  </ul>
+</div>
+
+<!-- Positioned to the right, aligned to end -->
+<div dropdown dropdown-position="right" dropdown-align="end">
+  <button dropdown-toggle>More</button>
+  <ul dropdown-menu>
+    <li dropdown-item>Settings</li>
+    <li dropdown-item>Logout</li>
+  </ul>
+</div>
+```
+
+### Container Attributes
+
+| Attribute | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `dropdown` | boolean attr | *required* | Marks the wrapper element |
+| `dropdown-position` | `"bottom"` \| `"top"` \| `"left"` \| `"right"` | `"bottom"` | Primary axis for menu placement |
+| `dropdown-align` | `"start"` \| `"end"` | `"start"` | Cross-axis alignment of the menu relative to the toggle |
+
+The menu is positioned with `position: fixed` and automatically flips to the opposite side when it would overflow the viewport.
+
+> **Note:** Because dropdown menus use `position: fixed` with viewport-absolute coordinates, they escape parent `overflow: hidden` containers. This means dropdowns inside scrollable or clipped elements will still display correctly.
+
+## `dropdown-toggle` — Trigger Button
+
+The element that opens/closes the dropdown menu on click. Must be inside a `[dropdown]` container.
+
+```html
+<div dropdown>
+  <button dropdown-toggle>Click me</button>
+  <ul dropdown-menu>
+    <li dropdown-item>Option A</li>
+    <li dropdown-item>Option B</li>
+  </ul>
+</div>
+```
+
+The toggle automatically receives:
+- `aria-haspopup="menu"`
+- `aria-expanded="true"` / `"false"` (updated on open/close)
+- `aria-controls` linked to the menu's `id`
+
+## `dropdown-menu` — Popover Menu
+
+The menu panel that appears when the toggle is activated. Uses `popover="auto"` for native light-dismiss behavior.
+
+The menu automatically receives:
+- `popover="auto"` (native Popover API)
+- `role="menu"`
+- A unique `id` (auto-generated if not provided)
+- Class `.nojs-dropdown-menu`
+
+## `dropdown-item` — Menu Item
+
+An actionable item inside the dropdown menu. Supports keyboard navigation, disabled state, and automatic ARIA attributes.
+
+```html
+<!-- With disabled items -->
+<div dropdown>
+  <button dropdown-toggle>File</button>
+  <ul dropdown-menu>
+    <li dropdown-item>New</li>
+    <li dropdown-item>Open</li>
+    <li dropdown-item disabled>Save (read-only)</li>
+    <li dropdown-item>Export</li>
+  </ul>
+</div>
+
+<!-- With links -->
+<div dropdown>
+  <button dropdown-toggle>Navigate</button>
+  <ul dropdown-menu>
+    <a dropdown-item href="/dashboard">Dashboard</a>
+    <a dropdown-item href="/settings">Settings</a>
+    <a dropdown-item href="/help">Help</a>
+  </ul>
+</div>
+```
+
+### Item Attributes
+
+| Attribute | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `dropdown-item` | boolean attr | *required* | Marks the element as a menu item |
+| `disabled` | boolean attr | — | Disables the item (skipped during keyboard navigation) |
+
+Each item automatically receives:
+- `role="menuitem"`
+- `tabindex="-1"`
+- Class `.nojs-dropdown-item`
+- `aria-disabled="true"` when `disabled` is present
+
+### Dropdown Keyboard Navigation
+
+| Key | On toggle | On item |
+|-----|-----------|---------|
+| **Enter** / **Space** | Opens menu, focuses first item | Activates item (click) |
+| **Arrow Down** | Opens menu, focuses first item | Moves focus to next item (wraps to first) |
+| **Arrow Up** | Opens menu, focuses last item | Moves focus to previous item (wraps to last) |
+| **Home** | — | Moves focus to first item |
+| **End** | — | Moves focus to last item |
+| **Escape** | — | Closes menu, returns focus to toggle |
+| **Tab** | — | Closes menu, returns focus to toggle |
+
+Disabled items are skipped during arrow-key navigation.
+
+### Dropdown CSS Classes
+
+| Class | When applied |
+|-------|-------------|
+| `.nojs-dropdown-menu` | On the menu element (`[dropdown-menu]`) |
+| `.nojs-dropdown-item` | On each item element (`[dropdown-item]`) |
+| `.nojs-dropdown-item[aria-disabled="true"]` | On disabled items — `pointer-events: none; opacity: 0.5` |
+| `.nojs-dropdown-item:focus-visible` | On the currently focused item (for keyboard navigation styling) |
+
+The menu uses `position: fixed` with `z-index: 9999` and `min-width: max-content`. It repositions on scroll and resize while open.
+
+### Dropdown Accessibility
+
+- `aria-haspopup="menu"` on the toggle
+- `aria-expanded="true/false"` on the toggle (reflects open state)
+- `aria-controls` linking the toggle to the menu
+- `role="menu"` on the menu
+- `role="menuitem"` on each item
+- `tabindex="-1"` on items (roving focus via keyboard)
+- `aria-disabled="true"` on disabled items
+- Focus is trapped within the menu while open — **Escape** or **Tab** returns focus to the toggle
+
+---
+
+# Toast Notifications
+
+## `toast-container` — Position Container
+
+Defines where toast notifications appear on screen. Multiple containers can coexist at different positions. If no container is declared, a default `top-right` container is auto-created on `<body>`.
+
+```html
+<!-- Top-right (default) -->
+<div toast-container="top-right"></div>
+
+<!-- Bottom-center -->
+<div toast-container="bottom-center"></div>
+
+<!-- Multiple containers for different positions -->
+<div toast-container="top-right"></div>
+<div toast-container="bottom-left"></div>
+```
+
+### Container Attributes
+
+| Attribute | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `toast-container` | `"top-right"` \| `"top-left"` \| `"bottom-right"` \| `"bottom-left"` \| `"top-center"` \| `"bottom-center"` | `"top-right"` | Screen position for the toast stack |
+
+Each container automatically receives:
+- Class `.nojs-toast-container`
+- `data-position` attribute matching the position value
+- `role="log"`
+- `aria-live="polite"`
+- `aria-relevant="additions"`
+
+Toasts in **top** positions are prepended (newest on top). Toasts in **bottom** positions are appended (newest on bottom).
+
+## `toast` — Declarative Directive
+
+Watches an expression and shows a toast notification whenever the value changes to a truthy value. The expression's string value becomes the toast message.
+
+```html
+<!-- Show a toast when `message` changes -->
+<div state="{ message: '' }">
+  <input model="message" placeholder="Type a message">
+  <button click="message = 'Hello!'" toast="message"
+          toast-type="success"
+          toast-duration="5000">
+    Show Toast
+  </button>
+</div>
+
+<!-- Error toast that stays until dismissed -->
+<div toast="errorMsg"
+     toast-type="error"
+     toast-duration="0"
+     toast-dismiss="true">
+</div>
+```
+
+### Declarative Attributes
+
+| Attribute | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `toast` | expression | *required* | Watched expression — toast is shown when value changes to truthy |
+| `toast-type` | `"info"` \| `"success"` \| `"warning"` \| `"error"` | `"info"` | Visual type of the toast (set as `data-type` on the element) |
+| `toast-duration` | number (ms) | `3000` | Auto-dismiss delay. Use `0` for permanent toasts |
+| `toast-dismiss` | `"true"` \| `"false"` | `"true"` | Whether to show a dismiss button (`x`) |
+
+## `$toast()` — Global Function
+
+Creates a toast notification programmatically from any expression context (e.g., `click`, `submit`, `on:*` handlers).
+
+```html
+<!-- Basic usage -->
+<button click="$toast('Item saved!')">Save</button>
+
+<!-- With type -->
+<button click="$toast('Deleted', 'error')">Delete</button>
+
+<!-- Custom duration (10 seconds) -->
+<button click="$toast('Processing...', 'warning', 10000)">Process</button>
+
+<!-- Permanent toast (duration 0) -->
+<button click="$toast('Connection lost', 'error', 0)">
+  Simulate Error
+</button>
+```
+
+### Signature
+
+```
+$toast(message, type?, duration?) → HTMLElement
+```
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `message` | string | *required* | The text content of the toast |
+| `type` | `"info"` \| `"success"` \| `"warning"` \| `"error"` | `"info"` | Visual type (set as `data-type` attribute) |
+| `duration` | number (ms) | `3000` | Auto-dismiss delay. Use `0` for permanent toasts |
+
+The function always shows a dismiss button. It uses the first registered `toast-container`, or auto-creates a `top-right` container if none exists. Returns the created toast DOM element.
+
+### Toast CSS Classes
+
+| Class / Selector | When applied |
+|------------------|-------------|
+| `.nojs-toast-container` | On each toast container element |
+| `.nojs-toast-container[data-position="top-right"]` | Positions the container at the top-right corner |
+| `.nojs-toast-container[data-position="top-left"]` | Positions the container at the top-left corner |
+| `.nojs-toast-container[data-position="bottom-right"]` | Positions the container at the bottom-right corner |
+| `.nojs-toast-container[data-position="bottom-left"]` | Positions the container at the bottom-left corner |
+| `.nojs-toast-container[data-position="top-center"]` | Positions the container at the top-center |
+| `.nojs-toast-container[data-position="bottom-center"]` | Positions the container at the bottom-center |
+| `.nojs-toast` | On each individual toast element |
+| `.nojs-toast[data-type="info"]` | Style hook for info toasts |
+| `.nojs-toast[data-type="success"]` | Style hook for success toasts |
+| `.nojs-toast[data-type="warning"]` | Style hook for warning toasts |
+| `.nojs-toast[data-type="error"]` | Style hook for error toasts |
+| `.nojs-toast-dismiss` | On the dismiss (`x`) button inside a toast |
+
+The container uses `position: fixed`, `z-index: 10001`, and `max-width: min(24rem, calc(100vw - 2rem))`. Each toast uses `popover="manual"` for stacking.
+
+### Toast Accessibility
+
+- `role="log"` on toast containers
+- `aria-live="polite"` on toast containers (new toasts are announced)
+- `aria-relevant="additions"` on toast containers
+- `aria-live="assertive"` on error toasts (announced immediately by screen readers)
+- `aria-label="Dismiss"` on the dismiss button
+
+---
+
+# Tabs
+
+## `tabs` — Tab Container
+
+```html
+<!-- Basic tabs (first tab active by default) -->
+<div tabs>
+  <button tab>Profile</button>
+  <button tab>Settings</button>
+  <button tab>Billing</button>
+
+  <div panel>Profile content...</div>
+  <div panel>Settings content...</div>
+  <div panel>Billing content...</div>
+</div>
+
+<!-- Activate a specific tab (0-based index) -->
+<div tabs="2">
+  <button tab>Tab A</button>
+  <button tab>Tab B</button>
+  <button tab>Tab C</button>
+
+  <div panel>Panel A</div>
+  <div panel>Panel B</div>
+  <div panel>Panel C (active)</div>
+</div>
+```
+
+### Tabs Attributes
+
+| Attribute | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `tabs` | number (0-based index) | `0` | Initial active tab index |
+| `tab-position` | `"top"` \| `"bottom"` \| `"left"` \| `"right"` | `"top"` | Placement of the tab list relative to panels |
+
+## `tab` — Tab Button
+
+Marks a direct child of `[tabs]` as a tab trigger. Each `[tab]` is paired with a `[panel]` by order.
+
+| Attribute | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `tab` | boolean attr | *required* | Marks the element as a tab trigger |
+| `tab-disabled` | expression | `false` | When truthy, the tab cannot be activated |
+
+## `panel` — Tab Panel
+
+Marks a direct child of `[tabs]` as a panel. Panels are paired with tabs by order: the first `[tab]` controls the first `[panel]`, the second controls the second, and so on.
+
+| Attribute | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `panel` | boolean attr | *required* | Marks the element as a tab panel |
+
+### Tab Positions
+
+Use `tab-position` to control where the tab list appears relative to the panels.
+
+```html
+<!-- Tabs on top (default) -->
+<div tabs tab-position="top">...</div>
+
+<!-- Tabs on the bottom -->
+<div tabs tab-position="bottom">...</div>
+
+<!-- Tabs on the left (vertical) -->
+<div tabs tab-position="left">...</div>
+
+<!-- Tabs on the right (vertical) -->
+<div tabs tab-position="right">...</div>
+```
+
+### Disabled Tabs
+
+Disabled tabs are skipped by keyboard navigation and cannot be activated by click. If the initial tab is disabled, the next enabled tab is activated automatically.
+
+```html
+<div state="{ locked: true }">
+  <div tabs>
+    <button tab>Open</button>
+    <button tab tab-disabled="locked">Locked</button>
+    <button tab>Also open</button>
+
+    <div panel>Accessible panel</div>
+    <div panel>This panel cannot be reached</div>
+    <div panel>Also accessible</div>
+  </div>
+</div>
+```
+
+### Tabs Keyboard Navigation
+
+| Key | Action |
+|-----|--------|
+| `ArrowRight` / `ArrowDown` | Move to next enabled tab (wraps around) |
+| `ArrowLeft` / `ArrowUp` | Move to previous enabled tab (wraps around) |
+| `Home` | Move to first enabled tab |
+| `End` | Move to last enabled tab |
+| `Tab` | Move focus from the tab list into the active panel |
+
+### Tabs CSS Classes
+
+| Class | When applied |
+|-------|-------------|
+| `.nojs-tabs` | On the `[tabs]` container |
+| `.nojs-tablist` | On the generated `role="tablist"` wrapper |
+| `.nojs-tab` | On each `[tab]` element |
+| `.nojs-panel` | On each `[panel]` element |
+
+The container also receives a `data-position` attribute matching the `tab-position` value.
+
+### Tabs Accessibility
+
+- `role="tablist"` on the generated tab list wrapper
+- `role="tab"` on each tab, with `aria-selected` and `aria-controls` pointing to its panel
+- `role="tabpanel"` on each panel, with `aria-labelledby` pointing to its tab
+- `tabindex="0"` on the active tab, `tabindex="-1"` on inactive tabs (roving tabindex)
+- `tabindex="0"` on each panel for keyboard access
+- `aria-hidden="true"` and `inert` on inactive panels (prevents focus and screen reader access)
+- `aria-disabled="true"` on disabled tabs
+
+---
+
+# Tree
+
+## `tree` — Tree Container
+
+```html
+<!-- Basic tree -->
+<ul tree>
+  <li branch>
+    Documents
+    <ul subtree>
+      <li branch>
+        Work
+        <ul subtree>
+          <li>Report.pdf</li>
+          <li>Slides.pptx</li>
+        </ul>
+      </li>
+      <li>README.md</li>
+    </ul>
+  </li>
+  <li branch>
+    Photos
+    <ul subtree>
+      <li>Vacation.jpg</li>
+      <li>Profile.png</li>
+    </ul>
+  </li>
+</ul>
+```
+
+### Tree Attributes
+
+| Attribute | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `tree` | boolean attr | *required* | Marks the element as a tree root |
+| `tree-icon` | `"true"` \| `"false"` | `"true"` | When `"false"`, hides the built-in expand/collapse triangle icons |
+
+## `branch` — Expandable Tree Item
+
+Marks an element as a tree item that can be expanded or collapsed. Each `[branch]` should contain a `[subtree]` child with its nested content.
+
+| Attribute | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `branch` | `""` \| `"expanded"` | `""` (collapsed) | When set to `"expanded"`, the branch starts open |
+
+## `subtree` — Nested Group
+
+Marks a child element as the collapsible content of a `[branch]`. The subtree is shown or hidden when its parent branch is toggled.
+
+| Attribute | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `subtree` | boolean attr | *required* | Marks the element as a collapsible subtree group |
+
+### Dynamic Trees
+
+Trees work with No.JS data-binding directives like `each` for dynamic content.
+
+```html
+<div state="{ folders: [
+  { name: 'src', children: [
+    { name: 'index.js' },
+    { name: 'utils.js' }
+  ]},
+  { name: 'docs', children: [
+    { name: 'README.md' }
+  ]}
+]}">
+  <ul tree>
+    <template each="folder in folders">
+      <li branch>
+        <span bind="folder.name"></span>
+        <ul subtree if="folder.children.length">
+          <template each="file in folder.children">
+            <li bind="file.name"></li>
+          </template>
+        </ul>
+      </li>
+    </template>
+  </ul>
+</div>
+```
+
+### Selected State
+
+Clicking a branch selects it, adding the `nojs-branch-selected` class and `aria-selected="true"` to the element. Only one branch can be selected at a time — selecting a new branch automatically deselects the previous one.
+
+- **Click** selects a branch
+- **Enter** / **Space** also selects the focused branch
+- Selection is mutually exclusive across the entire tree
+
+### Tree Keyboard Navigation
+
+| Key | Action |
+|-----|--------|
+| `ArrowRight` | Expand a collapsed branch; if already expanded, focus the first child |
+| `ArrowLeft` | Collapse an expanded branch; if already collapsed, focus the parent branch |
+| `ArrowDown` | Move focus to the next visible tree item |
+| `ArrowUp` | Move focus to the previous visible tree item |
+| `Enter` / `Space` | Toggle expand/collapse and select the focused branch |
+| `Home` | Move focus to the first visible tree item |
+| `End` | Move focus to the last visible tree item |
+| *Printable character* | **Typeahead** — focuses the next item whose label starts with the typed characters (resets after 500ms of inactivity) |
+
+### Tree CSS Classes
+
+| Class | When applied |
+|-------|-------------|
+| `.nojs-tree` | On the `[tree]` root and on every `[subtree]` element |
+| `.nojs-branch` | On each `[branch]` element |
+| `.nojs-subtree` | On each `[subtree]` element |
+| `.nojs-branch-selected` | On the currently selected branch |
+
+### Tree Accessibility
+
+- `role="tree"` on the tree root
+- `role="treeitem"` on each branch
+- `role="group"` on each subtree
+- `aria-expanded="true/false"` on branches reflecting their expand/collapse state
+- `aria-hidden="true/false"` on subtrees reflecting visibility
+- `aria-selected="true/false"` on branches reflecting selection state
+- Roving `tabindex` — only the focused item has `tabindex="0"`, all others have `tabindex="-1"`
+- Full keyboard navigation including typeahead search
+
+---
+
+# Stepper
+
+## `stepper` — Multi-Step Container
+
+```html
+<!-- Basic stepper (linear mode, validates before advancing) -->
+<div stepper>
+  <div step>
+    <h3>Personal Info</h3>
+    <input model="name" required />
+    <input model="email" type="email" required />
+  </div>
+  <div step>
+    <h3>Address</h3>
+    <input model="street" required />
+    <input model="city" required />
+  </div>
+  <div step>
+    <h3>Confirmation</h3>
+    <p>Name: <span bind="name"></span></p>
+    <p>Email: <span bind="email"></span></p>
+  </div>
+</div>
+
+<!-- Free mode (any step clickable in the indicator) -->
+<div stepper stepper-mode="free">
+  <div step step-label="Account">...</div>
+  <div step step-label="Profile">...</div>
+  <div step step-label="Review">...</div>
+</div>
+
+<!-- Hide indicator or navigation buttons -->
+<div stepper stepper-indicator="false" stepper-nav="false">
+  <div step>Manual control only</div>
+  <div step>Use $stepper API</div>
+</div>
+```
+
+### Stepper Attributes
+
+| Attribute | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `stepper` | number | `0` | Initial step index (0-based) |
+| `stepper-mode` | `"linear"` \| `"free"` | `"linear"` | Navigation mode. Linear validates before advancing; free allows clicking any step |
+| `stepper-indicator` | `"true"` \| `"false"` | `"true"` | Show/hide the progress indicator |
+| `stepper-nav` | `"true"` \| `"false"` | `"true"` | Show/hide Previous/Next buttons |
+| `aria-label` | string | `"Stepper"` | Accessible label for the stepper container |
+
+## `step` — Step Content Panel
+
+Each direct child with the `step` attribute defines one step panel.
+
+| Attribute | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `step` | — | — | Marks the element as a step panel |
+| `step-label` | string | `"Step N"` | Custom label shown in the progress indicator |
+| `step-validate` | expression | — | Expression that must be truthy for the step to pass validation (linear mode). Checked in addition to `required` inputs |
+
+## `$stepper` Context API
+
+Inside any `stepper` container, the `$stepper` object is available in expressions:
+
+```html
+<div stepper>
+  <div step step-label="Info">
+    <h3>Step <span bind="$stepper.current + 1"></span> of <span bind="$stepper.total"></span></h3>
+    <input model="name" required />
+  </div>
+
+  <div step step-label="Done">
+    <p>All done!</p>
+  </div>
+
+  <!-- Custom navigation using the API -->
+  <button on:click="$stepper.prev()" disabled="$stepper.isFirst">Back</button>
+  <button on:click="$stepper.next()" hidden="$stepper.isLast">Continue</button>
+  <button on:click="submitForm()" show="$stepper.isLast">Submit</button>
+</div>
+```
+
+### API Properties
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `$stepper.current` | number | Current step index (0-based) |
+| `$stepper.total` | number | Total number of steps |
+| `$stepper.isFirst` | boolean | `true` when on the first step |
+| `$stepper.isLast` | boolean | `true` when on the last step |
+
+### API Methods
+
+| Method | Returns | Description |
+|--------|---------|-------------|
+| `$stepper.next()` | boolean | Advance to the next step. In linear mode, validates the current step first. Returns `false` if validation fails or already on the last step |
+| `$stepper.prev()` | boolean | Go back to the previous step. Returns `false` if already on the first step |
+| `$stepper.goTo(index)` | boolean | Jump to a specific step. In linear mode, validates all intermediate steps when moving forward. Returns `false` if out of bounds or validation fails |
+
+### Stepper Events
+
+| Event | `$event.detail` | Description |
+|-------|-----------------|-------------|
+| `step-change` | `{ current, total }` | Dispatched on the stepper element whenever the active step changes |
+
+### Linear Mode with Validation
+
+In `linear` mode (the default), the stepper validates the current step before allowing forward navigation. Validation checks:
+1. All `[required]` inputs within the step via `checkValidity()` / `reportValidity()`
+2. The `step-validate` expression (if present) must evaluate to a truthy value
+
+Going **backward** never requires validation. Using `$stepper.goTo(index)` forward in linear mode validates all intermediate steps sequentially.
+
+### Free Mode
+
+In `free` mode, every step in the progress indicator becomes clickable, allowing users to jump to any step without validation.
+
+### Stepper CSS Classes
+
+| Class | When applied |
+|-------|-------------|
+| `.nojs-stepper` | On the stepper container |
+| `.nojs-stepper-indicator` | On the generated progress indicator bar |
+| `.nojs-stepper-indicator-item` | On each step button in the indicator |
+| `.nojs-stepper-indicator-item[aria-selected="true"]` | On the active step indicator (bold number) |
+| `.nojs-stepper-indicator-item[data-completed]` | On completed steps (shows checkmark instead of number) |
+| `.nojs-stepper-indicator-item[data-clickable]` | On clickable steps in free mode |
+| `.nojs-stepper-separator` | On the line between indicator items |
+| `.nojs-step` | On each step panel |
+| `.nojs-step[aria-hidden="true"]` | On inactive step panels (`display: none`) |
+| `.nojs-stepper-nav` | On the navigation button container |
+| `.nojs-stepper-prev` | On the Previous button |
+| `.nojs-stepper-next` | On the Next button (text changes to "Finish" on the last step) |
+
+### Stepper Accessibility
+
+- `role="group"` and `aria-label` on the stepper container
+- `role="tablist"` on the progress indicator
+- `role="tab"` with `aria-selected` on each indicator item
+- `role="tabpanel"` on each step panel
+- `aria-controls` / `aria-labelledby` linking tabs to panels
+- `aria-hidden="true"` and `inert` on inactive step panels
+- `tabindex="0"` on the active indicator and step panels
+- Roving tabindex across indicator items
+- **Arrow Right** / **Arrow Left** — move focus between indicator items (navigates in free mode)
+- **Home** — move focus to the first indicator item
+- **End** — move focus to the last indicator item
+
+---
+
+# Skeleton
+
+## `skeleton` — Loading Placeholder
+
+Displays a shimmer animation over any element while a reactive expression is truthy. When the expression becomes falsy, the skeleton fades out and reveals the real content underneath.
+
+```html
+<!-- Basic text skeleton (active while `loading` is truthy) -->
+<h2 skeleton="loading">Article Title</h2>
+<p skeleton="loading">This paragraph appears after loading completes.</p>
+
+<!-- Circle avatar placeholder -->
+<div skeleton="loading" skeleton-type="circle" skeleton-size="64"></div>
+
+<!-- Multi-line text placeholder -->
+<div skeleton="loading" skeleton-lines="3"></div>
+
+<!-- Rectangular card placeholder -->
+<div skeleton="loading" skeleton-type="rect" skeleton-size="200"></div>
+```
+
+### Skeleton Attributes
+
+| Attribute | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `skeleton` | expression | *required* | Reactive expression — shows the skeleton placeholder while truthy |
+| `skeleton-type` | `"text"` \| `"circle"` \| `"rect"` | `"text"` | Shape of the placeholder. `text` renders full-width rounded bars, `circle` renders a circular placeholder, `rect` renders a rectangular placeholder |
+| `skeleton-lines` | number | — | Number of simulated text lines to generate. Each line is a shimmer bar; the last line is 60% width for a natural look |
+| `skeleton-size` | number \| string | — | Explicit dimension (width and height) for `circle` or `rect` types. Appends `px` if the value is a bare number |
+
+### Reactive Loading
+
+The skeleton directive is fully reactive. It watches the expression via `$watch` and toggles automatically:
+
+When loading is `true`:
+- Real children become invisible (`opacity: 0`, `pointer-events: none`)
+- A shimmer animation plays over the element via `::after`
+- The element's original dimensions are maintained
+
+When loading becomes `false`:
+- The `.nojs-skeleton` class is removed
+- A `.nojs-skeleton-fade` transition class fades the skeleton out
+- Real content is revealed
+
+### Card Skeleton Example
+
+Combine multiple skeleton elements for card layouts:
+
+```html
+<div state="{ loading: true, post: null }">
+  <div class="card" style="padding: 16px; max-width: 400px;">
+    <!-- Avatar -->
+    <div skeleton="loading" skeleton-type="circle" skeleton-size="48"
+         style="border-radius: 50%; margin-bottom: 12px;">
+      <img bind:src="post.authorAvatar" alt="" />
+    </div>
+
+    <!-- Title -->
+    <h3 skeleton="loading" style="min-height: 1.5em;">
+      <span bind="post.title"></span>
+    </h3>
+
+    <!-- Body text -->
+    <div skeleton="loading" skeleton-lines="3" style="min-height: 72px;">
+      <p bind="post.body"></p>
+    </div>
+  </div>
+</div>
+```
+
+### Skeleton CSS Classes
+
+| Class | When applied |
+|-------|-------------|
+| `.nojs-skeleton` | On the element while the skeleton is active |
+| `.nojs-skeleton > *` | Children become invisible (`opacity: 0`, `pointer-events: none`) |
+| `.nojs-skeleton::after` | Shimmer animation overlay (linear-gradient sweep) |
+| `.nojs-skeleton-circle` | Applied with `skeleton-type="circle"` — forces `border-radius: 50%` on the overlay |
+| `.nojs-skeleton-fade` | Transition class added during deactivation (`opacity 0.3s ease`) |
+| `.nojs-skeleton-line` | Generated text line placeholders (`0.8em` height, `0.6em` margin) |
+| `.nojs-skeleton-line:last-child` | Last line is `60%` width for a natural paragraph look |
+
+### Shimmer Animation
+
+The shimmer uses `@keyframes nojs-shimmer` — a `linear-gradient` that sweeps from right to left over `1.5s` with `ease-in-out` timing, repeating infinitely. The gradient uses `color-mix(in srgb, currentColor %, transparent)` for automatic dark mode compatibility.
+
+### Skeleton Accessibility
+
+- `aria-busy="true"` on the element while the skeleton is active
+- `aria-busy` is removed when the skeleton deactivates
+- Children are hidden from interaction via `pointer-events: none` while loading
+
+---
+
+# Split / Pane
+
+## `split` — Resizable Split Container
+
+```html
+<!-- Horizontal split (default) -->
+<div split style="height: 400px">
+  <div pane="30%">Left panel</div>
+  <div pane>Right panel (fills remaining space)</div>
+</div>
+
+<!-- Vertical split -->
+<div split="vertical" style="height: 600px">
+  <div pane="200px">Top panel</div>
+  <div pane>Bottom panel</div>
+</div>
+
+<!-- Custom gutter size -->
+<div split split-gutter="12" style="height: 400px">
+  <div pane>Left</div>
+  <div pane>Right</div>
+</div>
+
+<!-- Persisted layout (restored from localStorage on reload) -->
+<div split split-persist="editor-layout" style="height: 100vh">
+  <div pane="250px" pane-min="150">Sidebar</div>
+  <div pane>Editor</div>
+  <div pane="300px">Preview</div>
+</div>
+```
+
+### Split Attributes
+
+| Attribute | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `split` | `"horizontal"` \| `"vertical"` | `"horizontal"` | Split direction. Horizontal places panes side by side; vertical stacks them |
+| `split-gutter` | number (px) | `6` | Gutter width (horizontal) or height (vertical) in pixels |
+| `split-persist` | string | — | localStorage key for saving/restoring pane sizes. Stored under `nojs-split:<key>` |
+
+## `pane` — Define a Pane
+
+Each direct child with the `pane` attribute becomes a resizable pane inside a `split` container.
+
+| Attribute | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `pane` | string (CSS size) | — | Initial size (`"250px"`, `"30%"`). Omit for flexible fill |
+| `pane-min` | number (px) | `0` | Minimum pane size in pixels. Enforced during drag and keyboard resize |
+| `pane-max` | number (px) | `Infinity` | Maximum pane size in pixels |
+| `pane-collapsible` | `"true"` | — | Enables collapse/expand via double-click on the adjacent gutter |
+
+### Persisted Layout
+
+When `split-persist` is set, pane sizes are automatically saved to `localStorage` after every resize (drag, keyboard, or collapse). On page load, saved sizes are restored before the initial render. Sizes are stored under `nojs-split:<value>`. If the number of panes changes between sessions, the stored layout is discarded.
+
+### Nested Splits
+
+A `[pane]` can contain another `[split]` for complex layouts:
+
+```html
+<div split style="height: 100vh">
+  <div pane="250px" pane-min="150" pane-collapsible="true">
+    Sidebar
+  </div>
+  <div pane>
+    <!-- Vertical split inside a pane -->
+    <div split="vertical" style="height: 100%">
+      <div pane>Editor</div>
+      <div pane="200px" pane-min="100">Terminal</div>
+    </div>
+  </div>
+</div>
+```
+
+### Split Events
+
+| Event | `$event.detail` | Description |
+|-------|-----------------|-------------|
+| `on:split-resize` | `{ prevPane, nextPane }` | Fired after a drag resize ends |
+| `on:split-collapse` | `{ pane, collapsed }` | Fired when a pane is collapsed or expanded via double-click |
+
+### Split CSS Classes
+
+| Class | When applied |
+|-------|-------------|
+| `.nojs-split` | On the split container |
+| `.nojs-pane` | On each pane element |
+| `.nojs-gutter` | On each gutter (separator) element |
+| `.nojs-pane[data-collapsed="true"]` | On a collapsed pane |
+
+### CSS Custom Properties
+
+| Property | Default | Description |
+|----------|---------|-------------|
+| `--nojs-gutter-size` | `6px` | Gutter width/height. Overridden per-element when `split-gutter` is set |
+
+### Split Accessibility
+
+- `role="separator"` on each gutter element
+- `aria-orientation` set to `"vertical"` (for horizontal splits) or `"horizontal"` (for vertical splits)
+- `aria-valuenow` reflecting the current size (in px) of the preceding pane
+- `aria-valuemin` and `aria-valuemax` based on pane min/max constraints
+- `aria-label="Resize"` on each gutter
+- `tabindex="0"` for keyboard focus
+
+### Split Keyboard Navigation
+
+Focus a gutter element, then:
+
+| Key | Action |
+|-----|--------|
+| `ArrowRight` (horizontal) / `ArrowDown` (vertical) | Expand preceding pane by 10px |
+| `ArrowLeft` (horizontal) / `ArrowUp` (vertical) | Shrink preceding pane by 10px |
+| `Home` | Collapse preceding pane to its minimum size |
+| `End` | Expand preceding pane to its maximum (limited by next pane's minimum) |
+
+All keyboard resizes respect `pane-min` / `pane-max` constraints and trigger persistence when `split-persist` is set.
+
+---
+
+# Sortable Table
+
+## `sortable` — Enable Table Sorting
+
+Add to a `<table>` to enable column sorting. Works with the `each` directive in `<tbody>` — sorting mutates the data array in context, and `each` automatically re-renders the rows.
+
+```html
+<div state="{ users: [
+  { name: 'Alice', age: 30, email: 'alice@example.com' },
+  { name: 'Bob', age: 25, email: 'bob@example.com' },
+  { name: 'Carol', age: 35, email: 'carol@example.com' }
+] }">
+  <table sortable>
+    <thead>
+      <tr>
+        <th sort="name">Name</th>
+        <th sort="age" sort-type="number">Age</th>
+        <th sort="email">Email</th>
+        <th>Actions</th> <!-- no sort = not sortable -->
+      </tr>
+    </thead>
+    <tbody>
+      <tr each="user in users">
+        <td bind="user.name"></td>
+        <td bind="user.age"></td>
+        <td bind="user.email"></td>
+        <td><button on:click="alert(user.name)">View</button></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+```
+
+| Attribute | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `sortable` | boolean attr | — | Enables sort coordination on the table. Adds `.nojs-sortable` class |
+
+## `sort` — Sortable Column
+
+Place on a `<th>` inside a `sortable` table. The attribute value is the property key used for sorting.
+
+| Attribute | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `sort` | string | *required* | Property key to sort by (e.g., `"name"`, `"age"`) |
+| `sort-type` | `"string"` \| `"number"` \| `"date"` | `"string"` | Comparator type. `string` uses `localeCompare`, `number` uses numeric comparison, `date` parses with `new Date()` |
+| `sort-default` | `"asc"` \| `"desc"` | — | Initial sort direction applied on page load |
+
+### Sort Cycling
+
+Clicking a column header cycles through three states:
+1. **Ascending** — `data-sort-dir="asc"`, displays up triangle
+2. **Descending** — `data-sort-dir="desc"`, displays down triangle
+3. **None** — removes `data-sort-dir`, restores original array order
+
+Clicking a different column resets the previous column and starts at ascending.
+
+### Typed Sorting
+
+| `sort-type` | Behavior |
+|-------------|----------|
+| `"string"` | `String(a).localeCompare(String(b))` — locale-aware alphabetical |
+| `"number"` | `Number(a) - Number(b)` — numeric comparison |
+| `"date"` | `new Date(a).getTime() - new Date(b).getTime()` — chronological |
+
+`null` and `undefined` values sort before all other values.
+
+## `fixed-header` — Sticky Table Header
+
+Place on `<thead>` to make it stick to the top of its scroll container.
+
+```html
+<div style="height: 400px; overflow: auto">
+  <table sortable>
+    <thead fixed-header>
+      <tr>
+        <th sort="name">Name</th>
+        <th sort="age" sort-type="number">Age</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr each="user in users">
+        <td bind="user.name"></td>
+        <td bind="user.age"></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+```
+
+| Attribute | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `fixed-header` | boolean attr | — | Applies `position: sticky; top: 0` to the `<thead>` |
+
+## `fixed-col` — Sticky Column
+
+Place on `<th>` and/or `<td>` elements to pin a column to the left edge during horizontal scrolling.
+
+| Attribute | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `fixed-col` | boolean attr | — | Applies `position: sticky; left: 0` to the element |
+
+When `fixed-header` and `fixed-col` intersect (top-left cell), z-index stacking is handled automatically (`z-index: 3`) so the cell stays above both the scrolling header and column.
+
+### Table CSS Classes
+
+| Class | When applied |
+|-------|-------------|
+| `.nojs-sortable` | On the `<table>` with `sortable` |
+| `.nojs-fixed-header` | On the `<thead>` with `fixed-header` |
+| `.nojs-fixed-col` | On each `<th>`/`<td>` with `fixed-col` |
+
+### Data Attributes on `<th>`
+
+| Attribute | Values | Description |
+|-----------|--------|-------------|
+| `data-sortable` | (presence) | Marks a `<th>` as sortable (set automatically by `sort`) |
+| `data-sort-dir` | `"asc"` \| `"desc"` | Current sort direction on the active column. Removed when unsorted |
+
+### Sort Indicator Styles
+
+Sort indicators are rendered via CSS `::after` pseudo-elements:
+
+| State | Content | Opacity |
+|-------|---------|---------|
+| Unsorted | Up-down arrows | 0.3 |
+| Ascending | Up triangle | 1 |
+| Descending | Down triangle | 1 |
+
+### Z-Index Stacking
+
+| Element | `z-index` |
+|---------|-----------|
+| `.nojs-fixed-col` | 1 |
+| `.nojs-fixed-header` | 2 |
+| `.nojs-fixed-header .nojs-fixed-col` | 3 |
+
+### Table Accessibility
+
+- `aria-sort="none"` on each `<th>` with `sort` (initial state)
+- `aria-sort="ascending"` when sorted ascending
+- `aria-sort="descending"` when sorted descending
+- `data-sortable` attribute for styling hooks
+- `cursor: pointer` and `user-select: none` on sortable headers
+
+Sorting is triggered by clicking column headers. Only one column can be sorted at a time — clicking a new column resets all others to `aria-sort="none"`.
+
+### How Sorting Works
+
+The `sort` directive does **not** reorder DOM nodes. Instead, it mutates the data array in the NoJS context. The `each` directive detects the change and re-renders the `<tbody>` rows automatically. When sort is reset to "none", the original array order (captured before the first sort) is restored.
