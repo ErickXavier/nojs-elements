@@ -1,5 +1,5 @@
 import NoJS from '../../NoJS/src/index.js';
-import NojsElements from '../src/index.js';
+import NoJSElements from '../src/index.js';
 import { _splitRegistry, _paneRegistry, _resizeState } from '../src/split/state.js';
 
 // ─── Polyfill setPointerCapture for jsdom ────────────────────────────
@@ -12,7 +12,7 @@ if (!Element.prototype.releasePointerCapture) {
 
 // ─── Install the plugin once before all tests ────────────────────────
 beforeAll(() => {
-  NoJS.use(NojsElements);
+  NoJS.use(NoJSElements);
 });
 
 // ─── Helper: build a split container with panes ─────────────────────

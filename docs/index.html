@@ -50,6 +50,7 @@
       align-items: center;
       gap: 10px;
       text-decoration: none;
+      cursor: pointer;
     }
     .header .logo-img {
       height: 32px;
@@ -93,6 +94,7 @@
       font-weight: 500;
       color: var(--color-text-muted);
       text-decoration: none;
+      cursor: pointer;
       transition: color 0.2s;
     }
     .header-nav a:hover,
@@ -210,6 +212,7 @@
       padding: 10px 20px;
       border-radius: var(--radius-lg);
       text-decoration: none;
+      cursor: pointer;
       transition: background 0.2s;
       white-space: nowrap;
     }
@@ -273,6 +276,7 @@
       font-weight: 500;
       color: var(--color-text-secondary);
       text-decoration: none;
+      cursor: pointer;
       transition: background 0.15s;
     }
     .mobile-nav a:hover { background: var(--color-hover); }
@@ -360,6 +364,54 @@
     @media (max-width: 768px) {
       .sidebar { display: none; }
     }
+
+    /* ─── Prev / Next Navigation ───────────────── */
+    .prev-next {
+      display: flex;
+      justify-content: space-between;
+      align-items: stretch;
+      gap: 1rem;
+      padding: 2rem 2.5rem;
+      border-top: 1px solid var(--color-border);
+    }
+    .prev-next a {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 1rem 1.25rem;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      text-decoration: none;
+      color: inherit;
+      cursor: pointer;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      min-width: 0;
+      max-width: 50%;
+    }
+    .prev-next a:hover {
+      border-color: var(--color-accent);
+      box-shadow: 0 1px 4px var(--color-accent-ring);
+    }
+    .prev-next .pn-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--color-text-faint);
+    }
+    .prev-next .pn-title {
+      font-family: 'Space Grotesk', system-ui, sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--color-accent);
+    }
+    .prev-next .pn-next {
+      margin-left: auto;
+      text-align: right;
+    }
+    @media (max-width: 768px) {
+      .prev-next { padding: 1.5rem 1rem; }
+    }
   </style>
 </head>
 <body state="{ mobileOpen: false }">
@@ -392,6 +444,7 @@
 
     <nav class="header-nav">
       <a route="/">Home</a>
+      <a route="/dnd">Elements</a>
 
       <!-- Ecosystem dropdown -->
       <div class="eco-dropdown" state="{ ecoOpen: false }">
@@ -430,12 +483,13 @@
       </a>
 
       <!-- CTA -->
-      <a class="nav-cta" href="https://no-js.dev/#/docs" target="_blank">Get Started</a>
+      <a class="nav-cta" route="/getting-started">Get Started</a>
     </nav>
   </header>
 
   <!-- ─── Mobile Nav ────────────────────────────────── -->
   <div class="mobile-nav" show="mobileOpen">
+    <a route="/getting-started" on:click="mobileOpen = false"><strong>Getting Started</strong></a>
     <span class="mobile-nav-group-label">Components</span>
     <a route="/dnd" on:click="mobileOpen = false">Drag & Drop</a>
     <a route="/dropdown" on:click="mobileOpen = false">Dropdown</a>
@@ -459,6 +513,7 @@
 
     <!-- ─── Sidebar ───────────────────────────────── -->
     <nav class="sidebar" id="app-sidebar" aria-label="Component navigation">
+      <a route="/getting-started" class-active="$route.path === '/getting-started'" style="font-weight: 600; margin-bottom: 0.5rem;">Getting Started</a>
       <div class="sidebar-title">Components</div>
       <a route="/dnd"       class-active="$route.path === '/dnd'">Drag & Drop</a>
       <a route="/dropdown"  class-active="$route.path === '/dropdown'">Dropdown</a>
@@ -477,6 +532,9 @@
     <!-- ─── Route View ─────────────────────────────── -->
     <div class="app-content">
       <main route-view src="pages/"></main>
+
+      <!-- ─── Prev / Next Navigation ────────────────── -->
+      <div id="prev-next-nav" class="prev-next" style="display: none;"></div>
     </div>
   </div>
 
@@ -534,12 +592,20 @@
   <script src="https://cdn.no-js.dev/"></script>
   <script src="https://cdn-elements.no-js.dev/"></script>
   <script>
-    NoJS.use(NojsElements);
+    // Global NoJS configuration
+    NoJS.config({
+        debug: true,
+        router: {
+          useHash: true
+        },
+    });
+
     // Sidebar: hide on home
     function syncSidebar() {
       var sb = document.getElementById('app-sidebar');
       if (!sb) return;
-      var isHome = location.pathname === '/' || location.pathname === '';
+      var hash = location.hash.replace('#', '') || '/';
+      var isHome = hash === '/' || hash === '';
       if (isHome) sb.classList.add('hidden');
       else sb.classList.remove('hidden');
     }
@@ -556,6 +622,51 @@
         if (ctx && ctx.ecoOpen) { ctx.ecoOpen = false; }
       }
     });
+
+    // Prev / Next navigation (follows sidebar order)
+    var pnPages = [
+      { path: '/getting-started', title: 'Getting Started' },
+      { path: '/dnd',             title: 'Drag & Drop' },
+      { path: '/dropdown',        title: 'Dropdown' },
+      { path: '/modal',           title: 'Modal' },
+      { path: '/popover',         title: 'Popover' },
+      { path: '/skeleton',        title: 'Skeleton' },
+      { path: '/split',           title: 'Split Pane' },
+      { path: '/stepper',         title: 'Stepper' },
+      { path: '/table',           title: 'Sortable Table' },
+      { path: '/tabs',            title: 'Tabs' },
+      { path: '/toast',           title: 'Toast' },
+      { path: '/tooltip',         title: 'Tooltip' },
+      { path: '/tree',            title: 'Tree' },
+    ];
+    function syncPrevNext() {
+      var nav = document.getElementById('prev-next-nav');
+      if (!nav) return;
+      var hash = (location.hash.replace('#', '') || '/');
+      var idx = pnPages.findIndex(function(p) { return p.path === hash; });
+      if (idx === -1) { nav.style.display = 'none'; return; }
+      nav.style.display = 'flex';
+      var prev = idx > 0 ? pnPages[idx - 1] : null;
+      var next = idx < pnPages.length - 1 ? pnPages[idx + 1] : null;
+      var html = '';
+      if (prev) {
+        html += '<a href="#' + prev.path + '">'
+          + '<span class="pn-label">&larr; Previous</span>'
+          + '<span class="pn-title">' + prev.title + '</span></a>';
+      }
+      if (next) {
+        html += '<a class="pn-next" href="#' + next.path + '">'
+          + '<span class="pn-label">Next &rarr;</span>'
+          + '<span class="pn-title">' + next.title + '</span></a>';
+      }
+      nav.innerHTML = html;
+    }
+    syncPrevNext();
+    window.addEventListener('hashchange', syncPrevNext);
+    new MutationObserver(syncPrevNext).observe(
+      document.querySelector('[route-view]') || document.body,
+      { childList: true, subtree: true }
+    );
   </script>
 </body>
 </html>

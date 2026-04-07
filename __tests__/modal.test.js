@@ -1,10 +1,10 @@
 import NoJS from '../../NoJS/src/index.js';
-import NojsElements from '../src/index.js';
+import NoJSElements from '../src/index.js';
 import { _modalStack, _modalRegistry, BASE_Z_INDEX, resetModalState } from '../src/modal/state.js';
 
 // ─── Install the plugin once before all tests ────────────────────────
 beforeAll(() => {
-  NoJS.use(NojsElements);
+  NoJS.use(NoJSElements);
 });
 
 // ─── Polyfill Popover API for jsdom ──────────────────────────────────

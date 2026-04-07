@@ -1512,7 +1512,7 @@ import { registerTree, cleanupTree } from "./tree/index.js";
 import { registerStepper, cleanupStepper } from "./stepper/index.js";
 import { registerTable, cleanupTable } from "./table/index.js";
 
-const NojsElements = {
+const NoJSElements = {
   name: "nojs-elements",
 
   install(NoJS, options = {}) {
@@ -1544,7 +1544,7 @@ const NojsElements = {
   },
 };
 
-export default NojsElements;
+export default NoJSElements;
 ```
 
 **Selective Registration Option:** Consider supporting `options.modules` to allow users to register only specific modules:

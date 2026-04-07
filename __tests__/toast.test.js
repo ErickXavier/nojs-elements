@@ -1,5 +1,5 @@
 import NoJS from '../../NoJS/src/index.js';
-import NojsElements from '../src/index.js';
+import NoJSElements from '../src/index.js';
 import { _toastContainers, _toastTimers, resetToastState } from '../src/toast/state.js';
 import { _injectToastStyles } from '../src/toast/styles.js';
 import { _globals } from '../../NoJS/src/globals.js';
@@ -35,7 +35,7 @@ function installPopoverMock() {
 // ─── Install plugin once before all tests ────────────────────────────
 beforeAll(() => {
   installPopoverMock();
-  NoJS.use(NojsElements);
+  NoJS.use(NoJSElements);
 });
 
 // ─── Helper: setup a toast-container element ─────────────────────────

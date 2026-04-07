@@ -1,10 +1,10 @@
 import NoJS from '../../NoJS/src/index.js';
-import NojsElements from '../src/index.js';
+import NoJSElements from '../src/index.js';
 import { _tabsState } from '../src/tabs/state.js';
 
 // ─── Install the plugin once before all tests ────────────────────────
 beforeAll(() => {
-  NoJS.use(NojsElements);
+  NoJS.use(NoJSElements);
 });
 
 // ─── Helper: build a tabs container with N tab/panel pairs ───────────

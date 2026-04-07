@@ -11,7 +11,7 @@ import { registerSkeleton, cleanupSkeleton } from "./skeleton/index.js";
 import { registerSplit, cleanupSplit } from "./split/index.js";
 import { registerTable, cleanupTable } from "./table/index.js";
 
-const NojsElements = {
+const NoJSElements = {
   name: "nojs-elements",
 
   install(NoJS, options = {}) {
@@ -45,4 +45,4 @@ const NojsElements = {
   },
 };
 
-export default NojsElements;
+export default NoJSElements;

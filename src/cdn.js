@@ -1,10 +1,15 @@
 // ══��════════════════════════════════════════���════════════════════��══════
 //  NoJS Elements — CDN Entry Point
-//  For <script> tag usage: sets window.NojsElements
+//  For <script> tag usage: sets window.NoJSElements
 // ═════════════════��════════════════════════════��════════════════════════
 
-import NojsElements from "./index.js";
+import NoJSElements from "./index.js";
 
 if (typeof window !== "undefined") {
-  window.NojsElements = NojsElements;
+  window.NoJSElements = NoJSElements;
+
+  // Auto-install when NoJS core is already loaded
+  if (window.NoJS && typeof window.NoJS.use === "function") {
+    window.NoJS.use(NoJSElements);
+  }
 }

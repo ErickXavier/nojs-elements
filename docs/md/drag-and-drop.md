@@ -1,6 +1,6 @@
 # Drag and Drop
 
-> The DnD module is registered automatically when using `NoJS.use(NojsElements)` -- no separate registration is needed.
+> The DnD module is included in NoJS Elements. When using the CDN, it is auto-installed — no separate registration is needed. For ESM usage, call `NoJS.use(NoJSElements)` once.
 
 ## `drag` — Make an Element Draggable
 

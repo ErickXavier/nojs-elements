@@ -1,9 +1,9 @@
 import NoJS from '../../NoJS/src/index.js';
-import NojsElements from '../src/index.js';
+import NoJSElements from '../src/index.js';
 
 // ─── Install the plugin once before all tests ────────────────────────
 beforeAll(() => {
-  NoJS.use(NojsElements);
+  NoJS.use(NoJSElements);
 });
 
 // ─── Test helper: create a mock DragEvent with DataTransfer ────────────
@@ -790,11 +790,11 @@ describe('DnD Edge Cases', () => {
 // =======================================================================
 
 describe('Plugin Registration', () => {
-  test('duplicate NoJS.use(NojsElements) does not crash or duplicate directives', () => {
-    // NojsElements was already installed in beforeAll.
+  test('duplicate NoJS.use(NoJSElements) does not crash or duplicate directives', () => {
+    // NoJSElements was already installed in beforeAll.
     // Calling it again should be safely ignored (no error, no duplicate).
     expect(() => {
-      NoJS.use(NojsElements);
+      NoJS.use(NoJSElements);
     }).not.toThrow();
 
     // Verify the plugin is still functional after the duplicate call

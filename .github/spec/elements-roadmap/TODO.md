@@ -48,7 +48,7 @@ src/<element>/
 **CSS rules:** Minimal — positioning, display, layout only. No opinionated colors/fonts. All classes use `.nojs-*` prefix. One `<style data-nojs-X>` injection per module.
 
 **Test patterns:**
-- Unit: Jest, `import NoJS` + `NoJS.use(NojsElements)`, `document.createElement` + `NoJS.processTree()`, mock events, verify DOM/ARIA/state
+- Unit: Jest, `import NoJS` + `NoJS.use(NoJSElements)`, `document.createElement` + `NoJS.processTree()`, mock events, verify DOM/ARIA/state
 - E2E: Playwright, `page.goto('/e2e/examples/<element>.html')`, `getByTestId`, real interactions, verify visual + keyboard + accessibility
 
 ---
@@ -718,7 +718,7 @@ import { registerSkeleton, cleanupSkeleton } from "./skeleton/index.js";
 import { registerSplit, cleanupSplit } from "./split/index.js";
 import { registerTable, cleanupTable } from "./table/index.js";
 
-const NojsElements = {
+const NoJSElements = {
   name: "nojs-elements",
   install(NoJS, options = {}) {
     registerDnd(NoJS, options);
@@ -747,7 +747,7 @@ const NojsElements = {
     cleanupTable();
   },
 };
-export default NojsElements;
+export default NoJSElements;
 ```
 
 ### 11.2 Build Verification `@nojs-dev-js`

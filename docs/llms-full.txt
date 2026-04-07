@@ -2,7 +2,7 @@
 
 > NoJS Elements is a UI element plugin library for the No.JS HTML-first reactive framework. 12 declarative, accessible components — zero JavaScript required from developers. Everything is driven by HTML attributes. Requires No.JS >= 1.11.0.
 
-NoJS Elements provides drag-and-drop, tooltips, popovers, modals, dropdowns, toasts, tabs, trees, steppers, skeletons, split panes, and sortable tables. Each element auto-registers via `NoJS.use(NojsElements)`, injects scoped CSS (`.nojs-*` classes), and adds full ARIA accessibility and keyboard navigation out of the box.
+NoJS Elements provides drag-and-drop, tooltips, popovers, modals, dropdowns, toasts, tabs, trees, steppers, skeletons, split panes, and sortable tables. When loaded via CDN `<script>` tag, it auto-installs itself into NoJS — no `NoJS.use()` call needed. Each element injects scoped CSS (`.nojs-*` classes) and adds full ARIA accessibility and keyboard navigation out of the box.
 
 ## Table of Contents
 
@@ -53,19 +53,19 @@ npm install @erickxavier/nojs-elements
 
 ```javascript
 import NoJS from '@erickxavier/no-js';
-import NojsElements from '@erickxavier/nojs-elements';
+import NoJSElements from '@erickxavier/nojs-elements';
 
-NoJS.use(NojsElements);
+NoJS.use(NoJSElements);
 ```
 
 ### CDN (Script Tag)
 
+When loaded via `<script>` tag, NoJS Elements auto-installs itself — no `NoJS.use()` call needed:
+
 ```html
 <script src="https://cdn.no-js.dev/"></script>
-<script src="https://cdn.jsdelivr.net/npm/@erickxavier/nojs-elements/dist/iife/nojs-elements.js"></script>
-<script>
-  NoJS.use(NojsElements);
-</script>
+<script src="https://cdn.no-js.dev/elements"></script>
+<!-- That's it — all elements are ready to use -->
 ```
 
 ## Peer Dependency
@@ -93,7 +93,7 @@ This plugin requires **No.JS >= 1.11.0** as a peer dependency.
 
 # Drag and Drop
 
-> The DnD module is registered automatically when using `NoJS.use(NojsElements)` -- no separate registration is needed.
+> The DnD module is included in NoJS Elements. When using the CDN, it is auto-installed — no separate registration is needed. For ESM usage, call `NoJS.use(NoJSElements)` once.
 
 ## `drag` — Make an Element Draggable
 

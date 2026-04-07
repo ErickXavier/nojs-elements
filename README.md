@@ -28,19 +28,19 @@ npm install @erickxavier/nojs-elements
 
 ```javascript
 import NoJS from '@erickxavier/no-js';
-import NojsElements from '@erickxavier/nojs-elements';
+import NoJSElements from '@erickxavier/nojs-elements';
 
-NoJS.use(NojsElements);
+NoJS.use(NoJSElements);
 ```
 
 ### CDN (Script Tag)
 
+When loaded via `<script>` tag, NoJS Elements auto-installs itself — no `NoJS.use()` call needed:
+
 ```html
 <script src="https://cdn.no-js.dev/"></script>
-<script src="https://cdn.jsdelivr.net/npm/@erickxavier/nojs-elements/dist/iife/nojs-elements.js"></script>
-<script>
-  NoJS.use(NojsElements);
-</script>
+<script src="https://cdn.no-js.dev/elements"></script>
+<!-- That's it — all elements are ready to use -->
 ```
 
 ---

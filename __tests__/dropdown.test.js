@@ -1,5 +1,5 @@
 import NoJS from '../../NoJS/src/index.js';
-import NojsElements from '../src/index.js';
+import NoJSElements from '../src/index.js';
 import { _dropdownState, resetDropdownState } from '../src/dropdown/state.js';
 
 // ─── Popover API mock for jsdom ─────────────────────────────────────
@@ -33,7 +33,7 @@ function installPopoverMock() {
 // ─── Install plugin once before all tests ────────────────────────────
 beforeAll(() => {
   installPopoverMock();
-  NoJS.use(NojsElements);
+  NoJS.use(NoJSElements);
 });
 
 // ─── Helper: build a complete dropdown widget ────────────────────────
