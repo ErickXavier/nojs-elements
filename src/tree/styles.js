@@ -78,6 +78,37 @@ export function _injectTreeStyles() {
   outline: 2px solid #0EA5E9;
   outline-offset: 1px;
 }
+/* ── DnD integration ─────────────────────────── */
+.nojs-tree-drag-over {
+  background: #EFF6FF;
+  outline: 2px dashed #3B82F6;
+  outline-offset: -2px;
+  border-radius: 6px;
+}
+.nojs-tree-drag-indicator {
+  height: 2px;
+  background: #3B82F6;
+  border-radius: 1px;
+  pointer-events: none;
+  z-index: 10;
+}
+.nojs-tree-drag-indicator::before {
+  content: "";
+  position: absolute;
+  left: -3px;
+  top: -3px;
+  width: 8px;
+  height: 8px;
+  background: #3B82F6;
+  border-radius: 50%;
+}
+[role="treeitem"][draggable="true"] {
+  cursor: grab;
+}
+[role="treeitem"].nojs-dragging {
+  opacity: 0.4;
+  cursor: grabbing !important;
+}
 `.trim();
 
   const style = document.createElement("style");
