@@ -2,7 +2,7 @@
   .modal-content {
     padding: 2rem;
     max-width: 480px;
-    background: var(--color-surface);
+    background: var(--surface);
     border-radius: var(--radius-xl);
     box-shadow: 0 20px 60px rgba(0,0,0,0.15), 0 4px 12px rgba(0,0,0,0.1);
   }
@@ -10,11 +10,11 @@
     margin: 0 0 0.5rem;
     font-size: 1.25rem;
     font-weight: 700;
-    color: var(--color-text);
+    color: var(--text);
   }
   .modal-content .modal-desc {
     margin: 0 0 1.5rem;
-    color: var(--color-text-muted);
+    color: var(--text-muted);
     font-size: 0.9rem;
     line-height: 1.6;
   }
@@ -23,25 +23,25 @@
     gap: 0.5rem;
     justify-content: flex-end;
     padding-top: 1rem;
-    border-top: 1px solid var(--color-hover);
+    border-top: 1px solid var(--hover-bg);
   }
   .modal-actions button {
     padding: 0.55rem 1.2rem;
-    border: 1px solid var(--color-border);
+    border: 1px solid var(--border);
     border-radius: 8px;
-    background: var(--color-surface);
+    background: var(--surface);
     cursor: pointer;
     font-size: 0.875rem;
     font-weight: 500;
     transition: all 0.15s ease;
   }
-  .modal-actions button:hover { background: var(--color-bg); }
+  .modal-actions button:hover { background: var(--white); }
   .modal-actions button.primary {
-    background: var(--color-accent);
-    color: var(--color-surface);
-    border-color: var(--color-accent);
+    background: var(--primary);
+    color: var(--surface);
+    border-color: var(--primary);
   }
-  .modal-actions button.primary:hover { background: var(--color-accent-hover); }
+  .modal-actions button.primary:hover { background: var(--primary-dark); }
   .modal-icon {
     width: 44px; height: 44px;
     border-radius: 10px;
@@ -49,21 +49,21 @@
     margin-bottom: 1rem;
     font-size: 1.4rem;
   }
-  .icon-info  { background: var(--color-accent-bg); color: var(--color-accent-hover); }
-  .icon-warn  { background: #FFF7ED; color: var(--color-warning-hover); }
+  .icon-info  { background: var(--primary-surface); color: var(--primary-dark); }
+  .icon-warn  { background: #FFF7ED; color: var(--warning); }
   .icon-lock  { background: #FFF1F2; color: #E11D48; }
-  .icon-stack { background: #F0FDF4; color: var(--color-success-hover); }
+  .icon-stack { background: #F0FDF4; color: var(--success); }
   .trigger-btn {
     padding: 0.6rem 1.2rem;
-    border: 1px solid var(--color-border);
+    border: 1px solid var(--border);
     border-radius: 8px;
-    background: var(--color-surface);
+    background: var(--surface);
     cursor: pointer;
     font-size: 0.9rem;
     font-weight: 500;
     transition: all 0.15s ease;
   }
-  .trigger-btn:hover { background: var(--color-hover); border-color: var(--color-hover-border); }
+  .trigger-btn:hover { background: var(--hover-bg); border-color: var(--hover-border); }
 </style>
 
 <div class="route-header">
@@ -402,7 +402,7 @@
              var-onConfirm="() => { deleted = true }">
         </div>
         <button modal-open class="primary">Delete Item</button>
-        <span show="deleted" style="margin-left: 0.5rem; color: var(--color-danger); font-size: 0.85rem;">Deleted!</span>
+        <span show="deleted" style="margin-left: 0.5rem; color: var(--error); font-size: 0.85rem;">Deleted!</span>
       </div>
 
       <div style="margin-top: 1rem;"></div>
@@ -416,7 +416,7 @@
              var-onConfirm="() => { archived = true }">
         </div>
         <button modal-open>Archive Project</button>
-        <span show="archived" style="margin-left: 0.5rem; color: var(--color-success); font-size: 0.85rem;">Archived!</span>
+        <span show="archived" style="margin-left: 0.5rem; color: var(--success); font-size: 0.85rem;">Archived!</span>
       </div>
     </div>
     <div class="demo-tabbed-panel demo-tab-code" show="showCode">

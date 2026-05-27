@@ -3,7 +3,7 @@
   .dnd-demo-zone {
     min-height: 80px;
     padding: 1rem;
-    border: 2px dashed var(--color-border);
+    border: 2px dashed var(--border);
     border-radius: 8px;
     display: flex;
     flex-wrap: wrap;
@@ -12,26 +12,26 @@
     transition: border-color 0.15s;
   }
   .dnd-demo-zone.nojs-drag-over {
-    border-color: var(--color-accent);
-    background: var(--color-accent-bg);
+    border-color: var(--primary);
+    background: var(--primary-surface);
   }
   .dnd-demo-item {
     padding: 0.5rem 1rem;
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
+    background: var(--surface);
+    border: 1px solid var(--border);
     border-radius: 6px;
     cursor: grab;
     font-size: 0.875rem;
     font-weight: 500;
-    color: var(--color-text-secondary);
+    color: var(--text-secondary);
     user-select: none;
   }
   .dnd-demo-item.nojs-dragging {
     opacity: 0.4;
   }
   .dnd-demo-item.nojs-selected {
-    border-color: var(--color-accent);
-    background: var(--color-accent-bg);
+    border-color: var(--primary);
+    background: var(--primary-surface);
   }
   .dnd-kanban {
     display: flex;
@@ -47,7 +47,7 @@
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    color: var(--color-text-muted);
+    color: var(--text-muted);
   }
   .dnd-kanban-col .dnd-demo-zone {
     flex-direction: column;
@@ -178,7 +178,7 @@
     <div class="demo-tabbed-panel demo-tab-example" show="!showCode">
       <div state="{ fruits: ['Apple', 'Banana', 'Cherry'], basket: [] }" style="display: flex; gap: 1rem; flex-wrap: wrap;">
         <div style="flex: 1; min-width: 200px;">
-          <p style="margin: 0 0 0.5rem; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-text-muted);">Palette</p>
+          <p style="margin: 0 0 0.5rem; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted);">Palette</p>
           <div drag-list="fruits"
                template="basic-src-tpl"
                drag-list-key="$index"
@@ -190,7 +190,7 @@
           </div>
         </div>
         <div style="flex: 1; min-width: 200px;">
-          <p style="margin: 0 0 0.5rem; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-text-muted);">Basket</p>
+          <p style="margin: 0 0 0.5rem; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted);">Basket</p>
           <div drag-list="basket"
                template="basic-dst-tpl"
                drag-list-key="$index"
@@ -426,7 +426,7 @@
     <div class="demo-tabbed-panel demo-tab-example" show="!showCode">
       <div state="{ colors: ['Red', 'Green', 'Blue', 'Yellow'], received: [] }" style="display: flex; gap: 1rem; flex-wrap: wrap;">
         <div style="flex: 1; min-width: 200px;">
-          <p style="margin: 0 0 0.5rem; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-text-muted);">Select & drag</p>
+          <p style="margin: 0 0 0.5rem; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted);">Select & drag</p>
           <div drag-list="colors"
                template="multi-src-tpl"
                drag-list-key="$index"
@@ -437,7 +437,7 @@
           </div>
         </div>
         <div style="flex: 1; min-width: 200px;">
-          <p style="margin: 0 0 0.5rem; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-text-muted);">Drop here</p>
+          <p style="margin: 0 0 0.5rem; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted);">Drop here</p>
           <div drag-list="received"
                template="multi-dst-tpl"
                drag-list-key="$index"
@@ -514,7 +514,7 @@
           </div>
         </div>
         <div style="flex: 1; min-width: 200px;">
-          <p style="margin: 0 0 0.5rem; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-text-muted);">Max 2 items</p>
+          <p style="margin: 0 0 0.5rem; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted);">Max 2 items</p>
           <div drag-list="slots"
                template="max-dst-tpl"
                drag-list-key="$index"

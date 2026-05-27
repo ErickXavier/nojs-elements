@@ -1,7 +1,7 @@
 <style>
   /* ─── Hero (matching NoJS core landing) ─────── */
   .home-hero {
-    background: linear-gradient(180deg, var(--color-header), var(--color-header-end));
+    background: linear-gradient(180deg, var(--code-bg), var(--code-surface));
     padding: 80px 80px 72px;
     display: flex;
     flex-direction: column;
@@ -21,7 +21,7 @@
     font-family: 'Space Grotesk', system-ui, sans-serif;
     font-size: 13px;
     font-weight: 600;
-    color: var(--color-accent);
+    color: var(--primary);
   }
   .home-hero .badge svg {
     width: 16px;
@@ -40,7 +40,7 @@
   .home-hero p {
     font-family: 'Inter', system-ui, sans-serif;
     font-size: 18px;
-    color: var(--color-text-faint);
+    color: var(--text-dim);
     line-height: 1.6;
     max-width: 600px;
   }
@@ -52,7 +52,7 @@
     margin-top: 8px;
   }
   .home-hero-cta .btn-primary {
-    background: var(--color-accent);
+    background: var(--primary);
     color: #fff;
     padding: 14px 32px;
     font-size: 16px;
@@ -67,7 +67,7 @@
     gap: 8px;
     border: none;
   }
-  .home-hero-cta .btn-primary:hover { background: var(--color-accent-hover); }
+  .home-hero-cta .btn-primary:hover { background: var(--primary-dark); }
   .home-hero-cta .btn-outline {
     background: transparent;
     color: #CBD5E1;
@@ -84,11 +84,11 @@
     align-items: center;
     gap: 8px;
   }
-  .home-hero-cta .btn-outline:hover { border-color: var(--color-text-faint); color: #E2E8F0; }
+  .home-hero-cta .btn-outline:hover { border-color: var(--text-dim); color: #E2E8F0; }
 
   /* ─── Install snippet ──────────────────────── */
   .home-hero-install {
-    background: var(--color-header-end);
+    background: var(--code-surface);
     border: 1px solid #334155;
     border-radius: var(--radius-lg);
     overflow: hidden;
@@ -98,15 +98,15 @@
   }
   .home-hero-install-tabs {
     display: flex;
-    background: var(--color-header);
+    background: var(--code-bg);
   }
   .home-hero-install-tabs span {
     padding: 10px 18px;
     font-family: 'Space Grotesk', system-ui, sans-serif;
     font-size: 13px;
     font-weight: 600;
-    color: var(--color-accent);
-    background: var(--color-header-end);
+    color: var(--primary);
+    background: var(--code-surface);
   }
   .home-hero-install-code {
     padding: 14px 20px;
@@ -145,12 +145,12 @@
     font-family: 'Space Grotesk', system-ui, sans-serif;
     font-size: 28px;
     font-weight: 700;
-    color: var(--color-text);
+    color: var(--text);
     letter-spacing: -0.5px;
   }
   .home-grid-header p {
     font-size: 15px;
-    color: var(--color-text-muted);
+    color: var(--text-muted);
     margin-top: 0.5rem;
   }
   .home-grid {
@@ -162,10 +162,10 @@
     margin: 0 auto;
   }
   .card {
-    background: var(--color-surface);
+    background: var(--surface);
     border-radius: var(--radius-lg);
     padding: 1.25rem 1.5rem;
-    border: 1px solid var(--color-border);
+    border: 1px solid var(--border);
     text-decoration: none;
     color: inherit;
     cursor: pointer;
@@ -173,22 +173,22 @@
     display: block;
   }
   .card:hover {
-    border-color: var(--color-accent);
-    box-shadow: 0 1px 4px var(--color-accent-ring);
+    border-color: var(--primary);
+    box-shadow: 0 1px 4px var(--primary-light);
   }
   .card:focus-visible {
-    outline: 2px solid var(--color-accent);
+    outline: 2px solid var(--primary);
     outline-offset: 2px;
   }
   .card h2 {
     font-size: 1rem;
     font-weight: 600;
     margin-bottom: 0.25rem;
-    color: var(--color-text);
+    color: var(--text);
   }
   .card p {
     font-size: 0.85rem;
-    color: var(--color-text-muted);
+    color: var(--text-muted);
     line-height: 1.5;
   }
   .card-placeholder {
@@ -196,16 +196,16 @@
     cursor: default;
   }
   .card-placeholder:hover {
-    border-color: var(--color-border);
+    border-color: var(--border);
     box-shadow: none;
   }
-  .card-placeholder h2 { color: var(--color-text-faint); }
-  .card-placeholder p { color: var(--color-text-faint); }
+  .card-placeholder h2 { color: var(--text-dim); }
+  .card-placeholder p { color: var(--text-dim); }
   .card .tag {
     display: inline-block;
     padding: 0.15rem 0.5rem;
-    background: var(--color-accent-bg);
-    color: var(--color-accent-dark);
+    background: var(--primary-surface);
+    color: var(--primary-dark);
     border-radius: var(--radius-sm);
     font-size: 0.7rem;
     font-weight: 600;

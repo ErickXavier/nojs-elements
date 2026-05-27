@@ -1,22 +1,22 @@
 <style>
   .stepper-demo { margin-bottom: 2rem; }
-  .step-content { padding: 1.5rem; background: var(--color-bg); border-radius: 8px; margin-top: 1rem; }
+  .step-content { padding: 1.5rem; background: var(--white); border-radius: 8px; margin-top: 1rem; }
   .step-content h3 { margin-top: 0; }
   .form-group { margin-bottom: 1rem; }
   .form-group label { display: block; margin-bottom: 0.25rem; font-weight: 600; }
   .form-group input {
-    width: 100%; padding: 0.5rem; border: 1px solid var(--color-border);
+    width: 100%; padding: 0.5rem; border: 1px solid var(--border);
     border-radius: 4px; font-size: 1rem; box-sizing: border-box;
   }
-  .summary-row { padding: 0.5rem 0; border-bottom: 1px solid var(--color-border); }
-  .summary-label { font-weight: 600; color: var(--color-text-muted); }
-  .btn-secondary { background: var(--color-border); color: var(--color-text-secondary); border-color: var(--color-border); }
+  .summary-row { padding: 0.5rem 0; border-bottom: 1px solid var(--border); }
+  .summary-label { font-weight: 600; color: var(--text-muted); }
+  .btn-secondary { background: var(--border); color: var(--text-secondary); border-color: var(--border); }
   .btn-group { margin-top: 1rem; display: flex; gap: 0.5rem; }
   .nojs-stepper-nav {
     margin-top: 1rem;
   }
   .nojs-stepper-nav button {
-    background: var(--color-accent);
+    background: var(--primary);
     color: white;
     border: none;
     padding: 0.5rem 1.25rem;

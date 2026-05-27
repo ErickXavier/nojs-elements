@@ -11,7 +11,7 @@
     width: 28px;
     height: 28px;
     border-radius: 50%;
-    background: var(--color-accent);
+    background: var(--primary);
     color: #fff;
     font-family: 'Space Grotesk', system-ui, sans-serif;
     font-size: 14px;
@@ -29,12 +29,12 @@
     font-family: 'Space Grotesk', system-ui, sans-serif;
     font-size: 1rem;
     font-weight: 700;
-    color: var(--color-text);
+    color: var(--text);
     margin: 0 0 0.25rem;
   }
   .gs-step-content p {
     font-size: 0.875rem;
-    color: var(--color-text-muted);
+    color: var(--text-muted);
     margin: 0 0 0.75rem;
     line-height: 1.6;
   }
@@ -44,11 +44,11 @@
     align-items: flex-start;
     gap: 0.75rem;
     padding: 1rem 1.25rem;
-    background: var(--color-accent-bg);
+    background: var(--primary-surface);
     border: 1px solid rgba(14, 165, 233, 0.2);
     border-radius: var(--radius-lg);
     font-size: 0.85rem;
-    color: var(--color-text-secondary);
+    color: var(--text-secondary);
     line-height: 1.6;
     margin-top: 1rem;
   }
@@ -56,7 +56,7 @@
     flex-shrink: 0;
     width: 18px;
     height: 18px;
-    color: var(--color-accent);
+    color: var(--primary);
     margin-top: 1px;
   }
 
@@ -69,7 +69,7 @@
   .gs-element-card {
     display: block;
     padding: 0.75rem 1rem;
-    border: 1px solid var(--color-border);
+    border: 1px solid var(--border);
     border-radius: var(--radius-lg);
     text-decoration: none;
     color: inherit;
@@ -77,18 +77,18 @@
     transition: border-color 0.15s, box-shadow 0.15s;
   }
   .gs-element-card:hover {
-    border-color: var(--color-accent);
-    box-shadow: 0 1px 4px var(--color-accent-ring);
+    border-color: var(--primary);
+    box-shadow: 0 1px 4px var(--primary-light);
   }
   .gs-element-card h4 {
     font-size: 0.875rem;
     font-weight: 600;
-    color: var(--color-text);
+    color: var(--text);
     margin: 0 0 0.15rem;
   }
   .gs-element-card p {
     font-size: 0.75rem;
-    color: var(--color-text-faint);
+    color: var(--text-dim);
     margin: 0;
   }
 </style>
@@ -175,9 +175,9 @@
     <div class="demo-tabbed-panel demo-tab-example" show="!showCode">
       <template id="gs-modal">
         <div modal>
-          <div class="modal-content" style="padding: 2rem; max-width: 400px; background: var(--color-surface); border-radius: var(--radius-xl); box-shadow: 0 20px 60px rgba(0,0,0,0.15);">
+          <div class="modal-content" style="padding: 2rem; max-width: 400px; background: var(--surface); border-radius: var(--radius-xl); box-shadow: 0 20px 60px rgba(0,0,0,0.15);">
             <h2 style="margin: 0 0 0.5rem; font-size: 1.15rem; font-weight: 700;">Welcome!</h2>
-            <p style="margin: 0 0 1.25rem; color: var(--color-text-muted); font-size: 0.9rem; line-height: 1.6;">This modal was created with a single HTML attribute. No JavaScript needed.</p>
+            <p style="margin: 0 0 1.25rem; color: var(--text-muted); font-size: 0.9rem; line-height: 1.6;">This modal was created with a single HTML attribute. No JavaScript needed.</p>
             <div style="display: flex; justify-content: flex-end;">
               <button class="btn-primary" modal-close>Got it</button>
             </div>

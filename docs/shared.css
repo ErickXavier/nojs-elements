@@ -32,10 +32,10 @@
   --success:              #22C55E;
   --warning:              #F59E0B;
 
-  /* ─── Legacy compat (Elements-specific) ─────────── */
-  --color-accent-ring:    rgba(14, 165, 233, 0.12);
-  --color-hover:          #F1F5F9;
-  --color-hover-border:   #CBD5E1;
+  /* ─── Interactive states ─────────────────────────── */
+  --primary-ring:         rgba(14, 165, 233, 0.12);
+  --hover-bg:             #F1F5F9;
+  --hover-border:         #CBD5E1;
 
   /* ─── Radius ────────────────────────────────────── */
   --radius:    8px;
@@ -130,7 +130,7 @@ button, .btn {
   align-items: center;
   gap: 0.35rem;
 }
-button:hover { background: var(--color-hover); border-color: var(--color-hover-border); }
+button:hover { background: var(--hover-bg); border-color: var(--hover-border); }
 button:active { transform: scale(0.97); }
 button:focus-visible {
   outline: 2px solid var(--primary);
@@ -163,7 +163,7 @@ input, select, textarea {
 input:focus-visible, select:focus-visible, textarea:focus-visible {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px var(--color-accent-ring);
+  box-shadow: 0 0 0 3px var(--primary-ring);
 }
 label { font-size: 0.875rem; font-weight: 500; display: block; margin-bottom: 0.25rem; }
 

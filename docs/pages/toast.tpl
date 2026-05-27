@@ -10,12 +10,12 @@
   .btn-position {
     border-radius: var(--radius-md);
   }
-  .btn-error { background: var(--color-danger); color: var(--color-surface); border-color: var(--color-danger); }
-  .btn-error:hover { background: var(--color-danger-hover); border-color: var(--color-danger-hover); }
-  .btn-dismiss { background: var(--color-accent); color: var(--color-surface); border-color: var(--color-accent); }
-  .btn-dismiss:hover { background: var(--color-accent-hover); border-color: var(--color-accent-hover); }
-  .btn-position { background: var(--color-accent); color: var(--color-surface); border-color: var(--color-accent); }
-  .btn-position:hover { background: var(--color-accent-hover); border-color: var(--color-accent-hover); }
+  .btn-error { background: var(--error); color: var(--surface); border-color: var(--error); }
+  .btn-error:hover { background: var(--error); border-color: var(--error); }
+  .btn-dismiss { background: var(--primary); color: var(--surface); border-color: var(--primary); }
+  .btn-dismiss:hover { background: var(--primary-dark); border-color: var(--primary-dark); }
+  .btn-position { background: var(--primary); color: var(--surface); border-color: var(--primary); }
+  .btn-position:hover { background: var(--primary-dark); border-color: var(--primary-dark); }
 
   .declarative-row {
     display: flex;
@@ -26,7 +26,7 @@
 
   .declarative-row input {
     padding: 0.5rem 0.75rem;
-    border: 1px solid var(--color-border);
+    border: 1px solid var(--border);
     border-radius: 6px;
     font-size: 0.95rem;
     min-width: 200px;

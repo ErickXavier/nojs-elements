@@ -3,26 +3,26 @@
   th, td {
     padding: 0.75rem 1rem;
     text-align: left;
-    border-bottom: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--border);
     font-size: 0.875rem;
   }
   th {
-    background: var(--color-bg);
+    background: var(--white);
     font-weight: 600;
     cursor: pointer;
     user-select: none;
     white-space: nowrap;
   }
-  th:hover { background: var(--color-hover); }
-  tr:hover td { background: var(--color-bg-subtle); }
+  th:hover { background: var(--hover-bg); }
+  tr:hover td { background: var(--white-subtle); }
   .scroll-container {
     height: 280px;
     overflow-y: auto;
-    border: 1px solid var(--color-border);
+    border: 1px solid var(--border);
     border-radius: 8px;
   }
   .name-cell { font-weight: 500; }
-  .muted { color: var(--color-text-muted); }
+  .muted { color: var(--text-muted); }
   .badge {
     display: inline-block;
     padding: 0.15rem 0.5rem;

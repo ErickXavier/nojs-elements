@@ -2,7 +2,7 @@
   .skeleton-demo { margin-bottom: 2rem; }
   .card-layout {
     display: flex; gap: 1rem; padding: 1.5rem;
-    background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 8px;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
   }
   .card-avatar { flex-shrink: 0; }
   .card-body { flex: 1; }
@@ -64,7 +64,7 @@
           <h2 skeleton="loading">Welcome to NoJS Elements</h2>
           <p skeleton="loading">This is the real content that appears when loading is complete. NoJS Elements provides a rich set of UI components that work with simple HTML attributes.</p>
         </div>
-        <p style="text-align:center; color: var(--color-text-faint); margin-top: 0.5rem;" bind="'Loading... ' + countdown + 's'"></p>
+        <p style="text-align:center; color: var(--text-dim); margin-top: 0.5rem;" bind="'Loading... ' + countdown + 's'"></p>
       </div>
       <div show="!loading" style="text-align:center;">
         <div class="content-text">
@@ -253,7 +253,7 @@
         </div>
       </div>
       <button class="btn btn-primary" on:click="loading = !loading">Toggle Loading</button>
-      <span style="margin-left: 0.75rem; font-size: 0.85rem; color: var(--color-text-faint);">loading: <span bind="loading ? 'true' : 'false'"></span></span>
+      <span style="margin-left: 0.75rem; font-size: 0.85rem; color: var(--text-dim);">loading: <span bind="loading ? 'true' : 'false'"></span></span>
     </div>
     <div class="demo-tabbed-panel demo-tab-code" show="showCode">
       <div class="demo-code-scroll">

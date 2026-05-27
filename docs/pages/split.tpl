@@ -1,6 +1,6 @@
 <style>
   .split-demo {
-    border: 1px solid var(--color-border);
+    border: 1px solid var(--border);
     border-radius: 8px;
     overflow: hidden;
   }
@@ -10,11 +10,11 @@
   }
 
   .pane-sidebar {
-    background: var(--color-hover);
+    background: var(--hover-bg);
   }
 
   .pane-content {
-    background: var(--color-surface);
+    background: var(--surface);
   }
 
   .pane-editor {
@@ -30,15 +30,15 @@
   }
 
   .pane-nav {
-    background: var(--color-accent-bg);
+    background: var(--primary-surface);
   }
 
   .pane-main {
-    background: var(--color-surface);
+    background: var(--surface);
   }
 
   .pane-aside {
-    background: var(--color-bg);
+    background: var(--white);
   }
 </style>
 

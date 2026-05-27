@@ -14,14 +14,14 @@
     align-items: center;
     justify-content: center;
     font-size: 1.1rem;
-    color: var(--color-text-muted);
+    color: var(--text-muted);
     padding: 0;
   }
-  .tabs-scroll-btn:hover { color: var(--color-accent); }
+  .tabs-scroll-btn:hover { color: var(--primary); }
   .tabs-scroll-btn[hidden] { display: none; }
   .tabs-scroll-btn { border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
-  .tabs-scroll-left  { left: 0; background: linear-gradient(90deg, var(--color-bg) 60%, transparent); }
-  .tabs-scroll-right { right: 0; background: linear-gradient(-90deg, var(--color-bg) 60%, transparent); }
+  .tabs-scroll-left  { left: 0; background: linear-gradient(90deg, var(--white) 60%, transparent); }
+  .tabs-scroll-right { right: 0; background: linear-gradient(-90deg, var(--white) 60%, transparent); }
   .nojs-panel h3 { margin-top: 0; }
 </style>
 

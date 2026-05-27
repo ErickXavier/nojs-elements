@@ -1,7 +1,7 @@
 <style>
   .dropdown-divider {
     height: 1px;
-    background: var(--color-border);
+    background: var(--border);
     margin: 0.25rem 0;
   }
   .dropdown-icon { font-size: 1rem; width: 1.25rem; text-align: center; }

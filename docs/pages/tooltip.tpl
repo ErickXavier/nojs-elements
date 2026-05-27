@@ -9,18 +9,18 @@
   }
   .tooltip-grid button {
     padding: 0.6rem 1.2rem;
-    border: 1px solid var(--color-border);
+    border: 1px solid var(--border);
     border-radius: 6px;
-    background: var(--color-surface);
+    background: var(--surface);
     cursor: pointer;
     font-size: 0.875rem;
     font-weight: 500;
-    color: var(--color-text-secondary);
+    color: var(--text-secondary);
     transition: background 0.12s, border-color 0.12s;
   }
   .tooltip-grid button:hover {
-    background: var(--color-hover);
-    border-color: var(--color-hover-border);
+    background: var(--hover-bg);
+    border-color: var(--hover-border);
   }
 </style>
 

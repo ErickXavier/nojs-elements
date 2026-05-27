@@ -263,8 +263,8 @@
         <div popover="user-card" popover-position="bottom" class="popover-box">
           <div if="user">
             <h3 bind="user.name"></h3>
-            <p bind="user.email" style="color: var(--color-text-muted); font-size: 0.85rem;"></p>
-            <p bind="user.company.name" style="color: var(--color-text-faint); font-size: 0.8rem;"></p>
+            <p bind="user.email" style="color: var(--text-muted); font-size: 0.85rem;"></p>
+            <p bind="user.company.name" style="color: var(--text-dim); font-size: 0.8rem;"></p>
           </div>
           <button popover-dismiss style="margin-top: 0.5rem;">Close</button>
         </div>
