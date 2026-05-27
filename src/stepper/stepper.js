@@ -1,5 +1,10 @@
 import { _stepperRegistry } from "./state.js";
 import { _injectStepperStyles } from "./styles.js";
+import {
+  checkStepValidationGate,
+  touchAllFields,
+  dispatchValidationBlocked,
+} from "./validation.js";
 
 function addDisposer(el, fn) {
   el.__disposers = el.__disposers || [];
@@ -130,7 +135,28 @@ export function registerStepper(NoJS) {
         const stepEl = steps[index];
         if (!stepEl) return true;
 
-        // Check required inputs within the step
+        // 1. Check stepper-validate gate (NoJS Validation module integration)
+        if (!checkStepValidationGate(stepEl, NoJS.findContext)) {
+          const form = stepEl.querySelector("form[validate]");
+          if (form) {
+            // Touch all fields so error messages become visible
+            touchAllFields(form);
+            // Mark the indicator as invalid
+            if (indicatorItems[index]) {
+              indicatorItems[index].classList.add("nojs-step-invalid");
+            }
+            // Dispatch blocked event on the stepper container
+            dispatchValidationBlocked(el, stepEl, form);
+          }
+          return false;
+        }
+
+        // Clear invalid indicator when gate passes
+        if (indicatorItems[index]) {
+          indicatorItems[index].classList.remove("nojs-step-invalid");
+        }
+
+        // 2. Check required inputs within the step (native HTML validation)
         const inputs = stepEl.querySelectorAll("[required]");
         for (const input of inputs) {
           if (typeof input.checkValidity === "function" && !input.checkValidity()) {
@@ -139,7 +165,7 @@ export function registerStepper(NoJS) {
           }
         }
 
-        // Check step-validate expression
+        // 3. Check step-validate expression
         const validateExpr = stepEl.getAttribute("step-validate");
         if (validateExpr) {
           try {
