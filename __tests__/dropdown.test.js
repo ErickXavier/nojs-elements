@@ -334,6 +334,151 @@ describe('Dropdown Style Injection', () => {
 });
 
 // =======================================================================
+//  POPOVER API STATE SYNC TESTS (ELEM-29)
+// =======================================================================
+
+describe('Dropdown Popover API state sync', () => {
+  afterEach(() => {
+    document.body.innerHTML = '';
+    document.querySelectorAll('style[data-nojs-dropdown]').forEach(s => s.remove());
+    resetDropdownState();
+  });
+
+  test('29 — open → close → re-open keeps menu + state consistent (Popover API path)', () => {
+    const { toggle, menu } = setupDropdown();
+
+    // Open
+    toggle.click();
+    expect(toggle.getAttribute('aria-expanded')).toBe('true');
+    expect(menu.hasAttribute('data-open')).toBe(true);
+    expect(menu._popoverOpen).toBe(true);
+    expect(_dropdownState.openMenus.has(menu)).toBe(true);
+
+    // Close — must call hidePopover so DOM popover state matches component state
+    toggle.click();
+    expect(toggle.getAttribute('aria-expanded')).toBe('false');
+    expect(menu.hasAttribute('data-open')).toBe(false);
+    expect(menu._popoverOpen).toBe(false);
+    expect(_dropdownState.openMenus.has(menu)).toBe(false);
+
+    // Re-open — would throw InvalidStateError if the popover were still open
+    expect(() => toggle.click()).not.toThrow();
+    expect(toggle.getAttribute('aria-expanded')).toBe('true');
+    expect(menu.hasAttribute('data-open')).toBe(true);
+    expect(menu._popoverOpen).toBe(true);
+    expect(_dropdownState.openMenus.has(menu)).toBe(true);
+  });
+
+  test('30 — re-open does not throw when the popover throws on double-show (regression guard)', () => {
+    // Simulate a *real* browser popover that throws InvalidStateError on double-show.
+    const realShow = HTMLElement.prototype.showPopover;
+    const realHide = HTMLElement.prototype.hidePopover;
+    HTMLElement.prototype.showPopover = function () {
+      if (this._popoverOpen) {
+        const err = new Error('Failed to execute showPopover: already open');
+        err.name = 'InvalidStateError';
+        throw err;
+      }
+      this._popoverOpen = true;
+    };
+    HTMLElement.prototype.hidePopover = function () {
+      this._popoverOpen = false;
+    };
+
+    try {
+      const { toggle } = setupDropdown();
+      toggle.click();   // open  → showPopover()
+      toggle.click();   // close → hidePopover()
+      // re-open must not throw because close() hid the popover
+      expect(() => toggle.click()).not.toThrow();
+      expect(toggle.getAttribute('aria-expanded')).toBe('true');
+    } finally {
+      HTMLElement.prototype.showPopover = realShow;
+      HTMLElement.prototype.hidePopover = realHide;
+    }
+  });
+
+  test('31 — open/close are symmetric in the fallback path (no Popover API)', () => {
+    // Remove the Popover API to force the manual CSS-only fallback.
+    const realShow = HTMLElement.prototype.showPopover;
+    const realHide = HTMLElement.prototype.hidePopover;
+    delete HTMLElement.prototype.showPopover;
+    delete HTMLElement.prototype.hidePopover;
+
+    try {
+      const { toggle, menu } = setupDropdown();
+
+      // Open via fallback — no popover, but data-open + aria must update
+      expect(() => toggle.click()).not.toThrow();
+      expect(toggle.getAttribute('aria-expanded')).toBe('true');
+      expect(menu.hasAttribute('data-open')).toBe(true);
+      expect(_dropdownState.openMenus.has(menu)).toBe(true);
+
+      // Close via fallback — data-open removed, aria reset (no thrown hidePopover)
+      expect(() => toggle.click()).not.toThrow();
+      expect(toggle.getAttribute('aria-expanded')).toBe('false');
+      expect(menu.hasAttribute('data-open')).toBe(false);
+      expect(_dropdownState.openMenus.has(menu)).toBe(false);
+
+      // Re-open via fallback
+      expect(() => toggle.click()).not.toThrow();
+      expect(toggle.getAttribute('aria-expanded')).toBe('true');
+      expect(menu.hasAttribute('data-open')).toBe(true);
+    } finally {
+      HTMLElement.prototype.showPopover = realShow;
+      HTMLElement.prototype.hidePopover = realHide;
+    }
+  });
+
+  test('32 — clicking an item closes via Popover API and re-open works', () => {
+    const { toggle, menu, items } = setupDropdown();
+
+    toggle.click();
+    expect(menu._popoverOpen).toBe(true);
+
+    items[0].click();
+    expect(toggle.getAttribute('aria-expanded')).toBe('false');
+    expect(menu.hasAttribute('data-open')).toBe(false);
+    expect(menu._popoverOpen).toBe(false);
+    expect(_dropdownState.openMenus.has(menu)).toBe(false);
+
+    // Re-open after item-initiated close must not throw
+    expect(() => toggle.click()).not.toThrow();
+    expect(toggle.getAttribute('aria-expanded')).toBe('true');
+  });
+
+  test('33 — item close resets state even without Popover API (fallback)', () => {
+    const realShow = HTMLElement.prototype.showPopover;
+    const realHide = HTMLElement.prototype.hidePopover;
+    delete HTMLElement.prototype.showPopover;
+    delete HTMLElement.prototype.hidePopover;
+
+    try {
+      const { toggle, menu, items } = setupDropdown();
+      toggle.click();
+      expect(toggle.getAttribute('aria-expanded')).toBe('true');
+
+      items[0].click();
+      expect(toggle.getAttribute('aria-expanded')).toBe('false');
+      expect(menu.hasAttribute('data-open')).toBe(false);
+      expect(_dropdownState.openMenus.has(menu)).toBe(false);
+    } finally {
+      HTMLElement.prototype.showPopover = realShow;
+      HTMLElement.prototype.hidePopover = realHide;
+    }
+  });
+
+  test('34 — concurrently-initialised menus get unique ids', () => {
+    const a = setupDropdown();
+    const b = setupDropdown();
+    const c = setupDropdown();
+    const ids = [a.menu.id, b.menu.id, c.menu.id];
+    expect(new Set(ids).size).toBe(3);
+    ids.forEach(id => expect(id).toMatch(/^nojs-dd-menu-/));
+  });
+});
+
+// =======================================================================
 //  STATE & CLEANUP TESTS
 // =======================================================================
 
