@@ -1,5 +1,6 @@
 import NoJS from '../../NoJS/src/index.js';
 import NoJSElements from '../src/index.js';
+import { _stepperRegistry } from '../src/stepper/state.js';
 
 // ─── Install the plugin once before all tests ────────────────────────
 beforeAll(() => {
@@ -342,6 +343,41 @@ describe('Stepper step-change Event', () => {
     expect(detail.current).toBe(3);
     expect(detail.total).toBe(4);
   });
+
+  test('44 -- initial step-change does not bubble to ancestors (finding #51)', () => {
+    const parent = document.createElement('div');
+    parent.setAttribute('state', '{}');
+    const el = document.createElement('div');
+    el.setAttribute('stepper', '');
+
+    for (let i = 0; i < 2; i++) {
+      const step = document.createElement('div');
+      step.setAttribute('step', '');
+      step.textContent = `Step ${i + 1}`;
+      el.appendChild(step);
+    }
+    parent.appendChild(el);
+
+    // Ancestor listener should NOT see the spurious initial event.
+    let ancestorDetail = null;
+    parent.addEventListener('step-change', (e) => { ancestorDetail = e.detail; });
+
+    document.body.appendChild(parent);
+    NoJS.processTree(parent);
+
+    expect(ancestorDetail).toBeNull();
+  });
+
+  test('45 -- step-change bubbles to ancestors on navigation (finding #51)', () => {
+    const { parent, ctx } = setupStepper(3);
+
+    let ancestorDetail = null;
+    parent.addEventListener('step-change', (e) => { ancestorDetail = e.detail; });
+
+    ctx.$stepper.next();
+    expect(ancestorDetail).not.toBeNull();
+    expect(ancestorDetail.current).toBe(1);
+  });
 });
 
 // =======================================================================
@@ -458,6 +494,40 @@ describe('Stepper Linear Mode', () => {
       expect(item.hasAttribute('data-clickable')).toBe(false);
     });
   });
+
+  test('46 -- linear goTo reveals failing step (not inert) so validation surfaces (finding #6)', () => {
+    const { el, ctx } = setupStepper(4, {
+      state: '{ ok0: true, ok1: false }',
+      'step-0-validate': 'ok0',
+      'step-1-validate': 'ok1',
+    });
+    const steps = el.querySelectorAll('[step]');
+
+    // goTo(3): step 0 passes, step 1 fails → navigation stops ON step 1.
+    const result = ctx.$stepper.goTo(3);
+    expect(result).toBe(false);
+    expect(ctx.$stepper.current).toBe(1);
+
+    // The failing step is the active/visible one (not hidden/inert), so its
+    // validation UI can be surfaced to the user.
+    expect(steps[1].getAttribute('aria-hidden')).toBe('false');
+    expect(steps[1].hasAttribute('inert')).toBe(false);
+  });
+
+  test('47 -- linear keydown keeps focus on current item (finding #50)', () => {
+    const { el } = setupStepper(3);
+    const items = el.querySelectorAll('.nojs-stepper-indicator-item');
+    const indicator = el.querySelector('.nojs-stepper-indicator');
+
+    // ArrowRight in linear mode must not move focus to a tabindex=-1 item.
+    indicator.dispatchEvent(
+      new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true })
+    );
+
+    // current is still 0, and focus stays on item 0 (the roving tabindex=0).
+    expect(document.activeElement).toBe(items[0]);
+    expect(items[0].getAttribute('tabindex')).toBe('0');
+  });
 });
 
 // =======================================================================
@@ -559,6 +629,42 @@ describe('Stepper Navigation Buttons', () => {
     const navEl = el.querySelector('.nojs-stepper-nav');
     expect(navEl).toBeNull();
   });
+
+  test('42 -- clicking Finish on last step emits step-complete (finding #5)', () => {
+    const { el, ctx } = setupStepper(2);
+    ctx.$stepper.next(); // advance to last step (Next relabels to Finish)
+    const nextBtn = el.querySelector('.nojs-stepper-next');
+    expect(nextBtn.textContent).toBe('Finish');
+
+    let detail = null;
+    el.addEventListener('step-complete', (e) => { detail = e.detail; });
+
+    nextBtn.click();
+    expect(detail).not.toBeNull();
+    expect(detail.current).toBe(1);
+    expect(detail.total).toBe(2);
+    // Current step is unchanged after completion
+    expect(ctx.$stepper.current).toBe(1);
+  });
+
+  test('43 -- step-complete blocked when last step validation fails (finding #5)', () => {
+    const { el, ctx } = setupStepper(2, {
+      state: '{ ok0: true, ok1: false }',
+      'step-0-validate': 'ok0',
+      'step-1-validate': 'ok1',
+    });
+    // Step 0 passes → advance to last step (index 1).
+    expect(ctx.$stepper.next()).toBe(true);
+    expect(ctx.$stepper.current).toBe(1);
+
+    let completed = false;
+    el.addEventListener('step-complete', () => { completed = true; });
+
+    // Finish on last step: step-1 validation fails → no completion event.
+    const result = ctx.$stepper.next();
+    expect(result).toBe(false);
+    expect(completed).toBe(false);
+  });
 });
 
 // =======================================================================
@@ -613,5 +719,23 @@ describe('Stepper Cleanup', () => {
     expect(el.querySelector('.nojs-stepper-nav')).toBeNull();
     // $stepper should NOT be on context
     expect(parent.__ctx.$stepper).toBeUndefined();
+  });
+
+  test('48 -- registry current reflects live step, not init snapshot (finding #32)', () => {
+    const { el, ctx } = setupStepper(3);
+
+    const entry = _stepperRegistry.get(el);
+    expect(entry).toBeDefined();
+    expect(entry.current).toBe(0);
+
+    ctx.$stepper.next();
+    // Registry must report the updated step, not the one-time init snapshot.
+    expect(entry.current).toBe(1);
+
+    ctx.$stepper.next();
+    expect(entry.current).toBe(2);
+
+    ctx.$stepper.prev();
+    expect(entry.current).toBe(1);
   });
 });
