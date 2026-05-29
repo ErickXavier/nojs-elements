@@ -1,4 +1,5 @@
 import NoJS from '../../NoJS/src/index.js';
+import { _disposeTree } from '../../NoJS/src/registry.js';
 import NoJSElements from '../src/index.js';
 import { _tableState } from '../src/table/state.js';
 
@@ -259,6 +260,24 @@ describe('Sort Default', () => {
     expect(ths[1].getAttribute('aria-sort')).toBe('descending');
     expect(ctx.rows[0].age).toBe(35);
   });
+
+  // ─── #52: multiple sort-default columns — first wins ───────────────
+  test('22 — multiple sort-default columns: only the first applies', () => {
+    const { table } = setupSortableTable({
+      sortDefaults: { name: 'asc', age: 'desc' },
+    });
+    const ths = getHeaders(table);
+
+    // First-declared column (name) keeps its default; the later one is ignored
+    // instead of silently overriding the shared sort state.
+    expect(ths[0].getAttribute('data-sort-dir')).toBe('asc');
+    expect(ths[1].hasAttribute('data-sort-dir')).toBe(false);
+    expect(ths[1].getAttribute('aria-sort')).toBe('none');
+
+    const state = _tableState.sorts.get(table);
+    expect(state.column).toBe('name');
+    expect(state.direction).toBe('asc');
+  });
 });
 
 // =======================================================================
@@ -338,6 +357,32 @@ describe('Table Cleanup', () => {
     _tableState.sorts.clear();
     expect(_tableState.sorts.size).toBe(0);
   });
+
+  // ─── #23: prune _tableState.sorts on table disposal ────────────────
+  test('19 — disposing a detached table prunes its sort state and snapshots', () => {
+    const { parent, table } = setupSortableTable();
+    getHeaders(table)[0].click(); // populate state + original-order snapshot
+
+    expect(_tableState.sorts.has(table)).toBe(true);
+    expect(table._nojsOriginalOrder).toBeDefined();
+
+    // Detach, then dispose like the router/each does on teardown
+    parent.remove();
+    _disposeTree(parent);
+
+    expect(_tableState.sorts.has(table)).toBe(false);
+    expect(table._nojsOriginalOrder).toBeUndefined();
+  });
+
+  test('20 — disposing while still connected keeps sort state intact', () => {
+    const { parent, table } = setupSortableTable();
+    getHeaders(table)[0].click();
+
+    // Table still in the document — a partial re-render must not wipe state
+    _disposeTree(parent);
+
+    expect(_tableState.sorts.has(table)).toBe(true);
+  });
 });
 
 // =======================================================================
@@ -395,5 +440,89 @@ describe('Table Edge Cases', () => {
     // Data should still have 3 items
     expect(ctx.rows.length).toBe(3);
     expect(ctx.rows.map(r => r.name).sort()).toEqual(['Alice', 'Bob', 'Charlie']);
+  });
+
+  // ─── #24: NaN comparators must keep a total order ──────────────────
+  test('22 — number sort sinks non-numeric values to the end (asc)', () => {
+    const { table, ctx } = setupSortableTable({
+      columns: [{ key: 'age', label: 'Age', sortType: 'number' }],
+      data: [
+        { age: 30 },
+        { age: 'N/A' },
+        { age: 10 },
+        { age: '1,200' },
+      ],
+    });
+    const ths = getHeaders(table);
+
+    ths[0].click(); // Age asc
+
+    // Valid numbers sorted ascending first, invalid (NaN) sink to the end —
+    // deterministic total order rather than garbage ordering.
+    const order = ctx.rows.map(r => r.age);
+    expect(order[0]).toBe(10);
+    expect(order[1]).toBe(30);
+    // Remaining two are the non-numeric entries (order between them is stable/equal)
+    expect(order.slice(2).sort()).toEqual(['1,200', 'N/A'].sort());
+  });
+
+  test('23 — number sort preserves negatives and decimals', () => {
+    const { table, ctx } = setupSortableTable({
+      columns: [{ key: 'val', label: 'Val', sortType: 'number' }],
+      data: [
+        { val: 0 },
+        { val: -5 },
+        { val: 2.5 },
+        { val: -0.5 },
+      ],
+    });
+    const ths = getHeaders(table);
+
+    ths[0].click(); // asc
+    expect(ctx.rows.map(r => r.val)).toEqual([-5, -0.5, 0, 2.5]);
+  });
+
+  test('24 — date sort sinks invalid dates to the end (asc)', () => {
+    const { table, ctx } = setupSortableTable({
+      columns: [{ key: 'date', label: 'Date', sortType: 'date' }],
+      data: [
+        { date: '2024-03-15' },
+        { date: 'not-a-date' },
+        { date: '2024-01-01' },
+      ],
+    });
+    const ths = getHeaders(table);
+
+    ths[0].click(); // asc
+    const order = ctx.rows.map(r => r.date);
+    expect(order[0]).toBe('2024-01-01');
+    expect(order[1]).toBe('2024-03-15');
+    expect(order[2]).toBe('not-a-date'); // Invalid Date sinks to end
+  });
+
+  test('25 — number sort produces a consistent total order regardless of input order', () => {
+    const baseData = [
+      { age: 'N/A' },
+      { age: 5 },
+      { age: 'abc' },
+      { age: 3 },
+    ];
+    const run = (data) => {
+      const { table, ctx } = setupSortableTable({
+        columns: [{ key: 'age', label: 'Age', sortType: 'number' }],
+        data,
+      });
+      getHeaders(table)[0].click();
+      return ctx.rows.map(r => (typeof r.age === 'number' ? r.age : 'X'));
+    };
+
+    const first = run(baseData);
+    document.body.innerHTML = '';
+    _tableState.sorts.clear();
+    const second = run([...baseData].reverse());
+
+    // Numeric prefix is identical and total order is stable across permutations.
+    expect(first.filter(v => v !== 'X')).toEqual([3, 5]);
+    expect(second.filter(v => v !== 'X')).toEqual([3, 5]);
   });
 });
