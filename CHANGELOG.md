@@ -5,6 +5,28 @@ All notable changes to **NoJS Elements** will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.13.0] - 2026-05-29
+
+### Added
+
+- **stepper** — `step-complete` event now bubbles so ancestors can observe step completion.
+
+### Changed
+
+- **stepper** — the initial `step-change` event is non-bubbling to avoid spurious ancestor handling on mount.
+- **cdn** — auto-install is now load-order-safe regardless of when Core initializes.
+
+### Fixed
+
+- **dropdown** — CRITICAL Popover state divergence between the dropdown and the native Popover API resolved.
+- **modal** — modal stack integrity preserved across nested/stacked modals.
+- **popover** — shared-registry consistency and live positioning corrected.
+- **stepper** — registry freshness so step lookups reflect the current DOM.
+- **table** — NaN-safe comparator and sort-state leak between renders fixed.
+- **toast** — `duration=0` (sticky) toasts handled correctly.
+- **tree** — leaf-click no longer bubbles to parent nodes.
+- **tabs / tooltip / split / skeleton** — disposal and timer cleanup hardened.
+
 ## [1.12.0](https://github.com/ErickXavier/nojs-elements/compare/v1.11.0...v1.12.0) — 2026-05-27
 
 ### Changed
