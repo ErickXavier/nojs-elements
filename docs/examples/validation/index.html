@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Validation — NoJS Elements E2E</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body { font-family: sans-serif; margin: 2rem; color: #333; }
+    section { border: 1px solid #ccc; padding: 1rem; margin-bottom: 1.5rem; border-radius: 4px; }
+    .test-label { font-weight: 600; margin: 0 0 0.75rem; color: #555; }
+    .form-row { margin-bottom: 0.75rem; }
+    .form-row label { display: block; margin-bottom: 0.25rem; font-weight: 500; }
+    .form-row input, .form-row select, .form-row textarea {
+      width: 100%; padding: 0.4rem; border: 1px solid #ccc; border-radius: 4px;
+    }
+    .error-msg { color: #dc2626; font-size: 0.85rem; margin-top: 0.25rem; }
+    .field-error { border-color: #dc2626 !important; }
+    .value { display: inline-block; padding: 0.15rem 0.5rem; background: #f5f5f5; border: 1px solid #ddd; border-radius: 3px; min-width: 1.5rem; text-align: center; }
+    button { padding: 0.5rem 1rem; cursor: pointer; border: 1px solid #ccc; border-radius: 4px; background: #fff; }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .success-msg { color: #16a34a; font-weight: 600; margin-top: 0.5rem; }
+  </style>
+</head>
+<body>
+
+  <!-- ======== Scenario 1: Basic form validation ======== -->
+  <section>
+    <p class="test-label">Test 1: Basic form validation</p>
+    <div state="{ submitted: false }">
+    <form validate error-class="field-error" data-test="basic-form"
+          on:submit="$event.preventDefault(); submitted = true">
+
+        <div class="form-row">
+          <label for="name">Name</label>
+          <input type="text" name="name" id="name" data-test="input-name"
+                 validate="required" error="Name is required" />
+          <div class="error-msg" data-test="error-name"
+               show="$form.errors.name" bind="$form.errors.name"></div>
+        </div>
+
+        <div class="form-row">
+          <label for="email">Email</label>
+          <input type="email" name="email" id="email" data-test="input-email"
+                 validate="required|email"
+                 error-required="Email is required"
+                 error-email="Please enter a valid email" />
+          <div class="error-msg" data-test="error-email"
+               show="$form.errors.email" bind="$form.errors.email"></div>
+        </div>
+
+        <div class="form-row">
+          <label for="age">Age</label>
+          <input type="number" name="age" id="age" data-test="input-age"
+                 validate="required|min:18"
+                 error-required="Age is required"
+                 error-min="You must be at least 18" />
+          <div class="error-msg" data-test="error-age"
+               show="$form.errors.age" bind="$form.errors.age"></div>
+        </div>
+
+        <p>
+          Form valid: <span class="value" data-test="form-valid" bind="$form.valid"></span>
+          Error count: <span class="value" data-test="error-count" bind="$form.errorCount"></span>
+          First error: <span class="value" data-test="first-error" bind="$form.firstError"></span>
+        </p>
+
+        <button type="submit" data-test="submit-btn">Submit</button>
+        <button type="button" data-test="reset-btn" on:click="$form.reset()">Reset</button>
+
+        <div class="success-msg" data-test="submit-msg" show="submitted">Form submitted!</div>
+    </form>
+    </div>
+  </section>
+
+  <!-- ======== Scenario 2: Per-field state via as="" ======== -->
+  <section>
+    <p class="test-label">Test 2: Per-field state</p>
+    <form validate error-class="field-error" data-test="field-state-form">
+      <div class="form-row">
+        <label for="username">Username</label>
+        <input type="text" name="username" id="username" data-test="input-username"
+               validate="required" as="usernameField" />
+        <div class="error-msg" data-test="username-error"
+             show="usernameField.error" bind="usernameField.error"></div>
+        <p>
+          Dirty: <span class="value" data-test="username-dirty" bind="usernameField.dirty"></span>
+          Touched: <span class="value" data-test="username-touched" bind="usernameField.touched"></span>
+          Valid: <span class="value" data-test="username-valid" bind="usernameField.valid"></span>
+        </p>
+      </div>
+    </form>
+  </section>
+
+  <!-- ======== Scenario 3: Validate-on triggers ======== -->
+  <section>
+    <p class="test-label">Test 3: Validate on focusout only</p>
+    <form validate validate-on="focusout" error-class="field-error" data-test="focusout-form">
+      <div class="form-row">
+        <label for="focusout-field">Required field (focusout only)</label>
+        <input type="text" name="focusField" id="focusout-field" data-test="input-focus"
+               validate="required" error="This field is required" />
+        <div class="error-msg" data-test="error-focus"
+             show="$form.errors.focusField" bind="$form.errors.focusField"></div>
+      </div>
+    </form>
+  </section>
+
+  <!-- ======== Scenario 4: Error template ======== -->
+  <section>
+    <p class="test-label">Test 4: Error template</p>
+    <form validate data-test="template-form">
+      <div class="form-row">
+        <label for="tpl-field">Name</label>
+        <input type="text" name="tplName" id="tpl-field" data-test="input-tpl"
+               validate="required" error="#error-tpl" />
+      </div>
+    </form>
+    <template id="error-tpl">
+      <div class="error-msg" data-test="tpl-error-rendered">
+        <span bind="$error"></span>
+      </div>
+    </template>
+  </section>
+
+  <!-- ======== Scenario 5: Conditional validation (validate-if) ======== -->
+  <section>
+    <p class="test-label">Test 5: Conditional validation</p>
+    <div state="{ showCompany: false }">
+      <form validate error-class="field-error" data-test="conditional-form">
+        <div class="form-row">
+          <label>
+            <input type="checkbox" data-test="toggle-company"
+                   on:click="showCompany = !showCompany" />
+            I have a company
+          </label>
+        </div>
+        <div class="form-row">
+          <label for="company">Company name</label>
+          <input type="text" name="company" id="company" data-test="input-company"
+                 validate="required" validate-if="showCompany"
+                 error="Company name is required" />
+          <div class="error-msg" data-test="error-company"
+               show="$form.errors.company" bind="$form.errors.company"></div>
+        </div>
+        <p>
+          Form valid: <span class="value" data-test="cond-form-valid" bind="$form.valid"></span>
+        </p>
+      </form>
+    </div>
+  </section>
+
+  <!-- ======== Scenario 6: Multiple rules (pattern + maxlength) ======== -->
+  <section>
+    <p class="test-label">Test 6: Multiple rules</p>
+    <form validate error-class="field-error" data-test="multi-rule-form">
+      <div class="form-row">
+        <label for="zipcode">ZIP Code (5 digits)</label>
+        <input type="text" name="zip" id="zipcode" data-test="input-zip"
+               pattern="[0-9]{5}" maxlength="5"
+               validate="required"
+               error-required="ZIP is required"
+               error-pattern="Must be 5 digits" />
+        <div class="error-msg" data-test="error-zip"
+             show="$form.errors.zip" bind="$form.errors.zip"></div>
+      </div>
+    </form>
+  </section>
+
+  <script src="../../../NoJS/dist/iife/no.js"></script>
+  <script src="../../../dist/iife/nojs-elements.js"></script>
+  <script>
+    NoJS.use(NoJSElements);
+    NoJS.init();
+  </script>
+</body>
+</html>

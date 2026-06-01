@@ -61,6 +61,13 @@ export function _injectStepperStyles() {
   margin: 0 0.5rem;
   min-width: 1rem;
 }
+.nojs-stepper-indicator-item.nojs-step-invalid {
+  color: #DC2626;
+}
+.nojs-stepper-indicator-item.nojs-step-invalid::before {
+  border-color: #DC2626;
+  box-shadow: 0 0 0 3px rgba(220,38,38,0.2);
+}
 .nojs-step[aria-hidden="true"] {
   display: none;
 }
