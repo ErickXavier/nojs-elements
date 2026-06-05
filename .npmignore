@@ -1,0 +1,22 @@
+# Source & dev files
+.gitignore
+.DS_Store
+.vscode/
+.idea/
+.github/
+.claude/
+
+# Tests
+__tests__/
+e2e/
+jest.config.js
+coverage/
+
+# Build tooling
+build.js
+
+# Docs
+docs/
+
+# Dev server
+test-server.js

@@ -1,0 +1,154 @@
+name: Bug Report
+description: Report a bug in NoJS Elements
+title: "[Bug]: "
+labels: ["bug", "triage"]
+body:
+
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug! Please fill out the sections below so we can reproduce and fix it.
+
+  - type: input
+    id: version
+    attributes:
+      label: NoJS Elements Version
+      description: "Check your package.json or the banner comment in the dist file."
+      placeholder: "e.g., 1.13.3"
+    validations:
+      required: true
+
+  - type: input
+    id: core-version
+    attributes:
+      label: No.JS Core Version
+      description: "Check `NoJS.version` in the browser console."
+      placeholder: "e.g., 1.13.3"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Bug Category
+      description: Which element is affected?
+      options:
+        - Drag & Drop (drag, drop, drag-list, drag-multiple)
+        - Form Validation (validate, $form)
+        - Dropdown
+        - Modal
+        - Popover
+        - Toast
+        - Tooltip
+        - Tabs
+        - Tree
+        - Split / Pane
+        - Sortable Table
+        - Stepper
+        - Skeleton
+        - Plugin lifecycle (install/dispose)
+        - Styles / CSS injection
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: browser
+    attributes:
+      label: Browser
+      options:
+        - Chrome
+        - Firefox
+        - Safari
+        - Edge
+        - Other (specify in description)
+    validations:
+      required: true
+
+  - type: input
+    id: os
+    attributes:
+      label: Operating System
+      placeholder: "e.g., macOS 15, Windows 11, Ubuntu 24.04"
+    validations:
+      required: false
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: A clear description of what the bug is.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: HTML to Reproduce
+      description: |
+        Paste the minimal HTML that reproduces the issue. Include both the No.JS core and Elements scripts.
+      render: html
+      placeholder: |
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <script src="https://cdn.no-js.dev/"></script>
+          <script src="https://cdn-elements.no-js.dev/"></script>
+        </head>
+        <body>
+          <!-- Your reproduction here -->
+        </body>
+        </html>
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What did you expect to happen?
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      description: What actually happened?
+    validations:
+      required: true
+
+  - type: textarea
+    id: console-errors
+    attributes:
+      label: Console Errors
+      description: Paste any errors from the browser console.
+      render: text
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: affects
+    attributes:
+      label: Where does this occur?
+      options:
+        - label: My own app using NoJS Elements
+        - label: Documentation site (elements.no-js.dev)
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Screenshots, screen recordings, related issues, or anything else that helps.
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Checklist
+      options:
+        - label: I have searched existing issues and this hasn't been reported yet
+          required: true
+        - label: I can reproduce this with the latest version of NoJS Elements
+          required: true
