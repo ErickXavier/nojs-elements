@@ -13,6 +13,7 @@ import { registerSplit, cleanupSplit } from "./split/index.js";
 import { registerTable, cleanupTable } from "./table/index.js";
 import { registerBreadcrumb, cleanupBreadcrumb } from "./breadcrumb/index.js";
 import { registerAccordion, cleanupAccordion } from "./accordion/index.js";
+import { registerVirtualList, cleanupVirtualList } from "./virtual-list/index.js";
 import { _internal } from "./_compat.js";
 
 // Elements whose core stubs this plugin replaces with full implementations.
@@ -64,6 +65,7 @@ const ELEMENT_DIRECTIVE_ATTRS = [
   "sortable", "sort", "fixed-header", "fixed-col",
   "breadcrumb",
   "accordion",
+  "virtual", "virtual-height", "virtual-buffer",
 ];
 
 const NoJSElements = {
@@ -88,6 +90,7 @@ const NoJSElements = {
     registerTable(NoJS, options);
     registerBreadcrumb(NoJS, options);
     registerAccordion(NoJS, options);
+    registerVirtualList(NoJS, options);
 
     // Load order 1: core auto-init already processed these nodes with stubs.
     _rebindSwappedNodes(NoJS);
@@ -146,6 +149,7 @@ const NoJSElements = {
     cleanupTable();
     cleanupBreadcrumb();
     cleanupAccordion();
+    cleanupVirtualList();
   },
 };
 
