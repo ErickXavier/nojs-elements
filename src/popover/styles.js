@@ -9,7 +9,6 @@ export function _injectPopoverStyles() {
   z-index: 9998;
   margin: 0;
   border: 1px solid #E2E8F0;
-  padding: 1rem;
   background: #fff;
   border-radius: 10px;
   box-shadow: 0 8px 24px rgba(0,0,0,0.12), 0 2px 6px rgba(0,0,0,0.06);

@@ -1,5 +1,5 @@
 /**
- * NoJS Elements v1.13.2 — Element plugins for No.JS
+ * NoJS Elements v1.13.3 — Element plugins for No.JS
  * Drag-and-drop, and more.
  * @author exs.dev
  * @homepage https://elements.no-js.dev/
@@ -72,7 +72,6 @@ var E={dragging:null,selected:new Map,placeholder:null},Fe=new Map;function bt()
   z-index: 9998;
   margin: 0;
   border: 1px solid #E2E8F0;
-  padding: 1rem;
   background: #fff;
   border-radius: 10px;
   box-shadow: 0 8px 24px rgba(0,0,0,0.12), 0 2px 6px rgba(0,0,0,0.06);
@@ -116,7 +115,7 @@ var E={dragging:null,selected:new Map,placeholder:null},Fe=new Map;function bt()
   margin: 0;
   min-width: max-content;
   list-style: none;
-  padding: 0.3rem 0;
+  padding: 0;
   background: #fff;
   border: 1px solid #E2E8F0;
   border-radius: 8px;

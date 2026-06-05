@@ -2,11 +2,19 @@
 
 > NoJS Elements is a UI element plugin library for the No.JS HTML-first reactive framework. 12 declarative, accessible components — zero JavaScript required from developers. Everything is driven by HTML attributes. Requires No.JS >= 1.11.0.
 
-NoJS Elements provides drag-and-drop, tooltips, popovers, modals, dropdowns, toasts, tabs, trees, steppers, skeletons, split panes, and sortable tables. When loaded via CDN `<script>` tag, it auto-installs itself into NoJS — no `NoJS.use()` call needed. Each element injects scoped CSS (`.nojs-*` classes) and adds full ARIA accessibility and keyboard navigation out of the box.
+NoJS Elements provides drag-and-drop, form validation, tooltips, popovers, modals, dropdowns, toasts, tabs, trees, steppers, skeletons, split panes, and sortable tables. When loaded via CDN `<script>` tag, it auto-installs itself into NoJS — no `NoJS.use()` call needed. Each element injects scoped CSS (`.nojs-*` classes) and adds full ARIA accessibility and keyboard navigation out of the box.
 
 ## Installation
 
 - [Getting Started](https://elements.no-js.dev/): NPM install, CDN script tag, ESM/IIFE usage, peer dependency on No.JS
+
+## Drag & Drop
+
+- [DnD](https://elements.no-js.dev/dnd): `drag`, `drop`, `drag-list`, `drag-multiple`; single-item and multi-select drag-and-drop, sortable lists, placeholder insertion, ghost element, cross-container transfers
+
+## Forms
+
+- [Validation](https://elements.no-js.dev/validation): `validate` directive on `<form>` with `$form` context (`valid`, `dirty`, `touched`, `submitting`, `errors`, `values`, `fields`, `reset()`); built-in rules (`required`, `email`, `min`, `max`, `minlength`, `maxlength`, `pattern`, `url`), custom validators via `NoJS.validator()`, per-field `validate-on` triggers, `validate-if` conditional rules, `error-class` styling
 
 ## Interaction Elements
 
@@ -41,6 +49,5 @@ NoJS Elements provides drag-and-drop, tooltips, popovers, modals, dropdowns, toa
 - [No.JS Full Docs](https://no-js.dev/llms-full.txt): Complete No.JS framework documentation
 - [NoJS LSP](https://lsp.no-js.dev/): VS Code extension with completion, hover, and diagnostics for No.JS directives
 - [NoJS Skill](https://github.com/ErickXavier/nojs-skill): AI agent reference for No.JS — full directive, filter, and validation docs
-- [NoJS CLI](https://github.com/ErickXavier/NoJS-Cli): Command-line tooling for No.JS projects
 - [npm](https://www.npmjs.com/package/@erickxavier/nojs-elements): Install via npm
 - [GitHub](https://github.com/ErickXavier/nojs-elements): Source code, issues, and contributions

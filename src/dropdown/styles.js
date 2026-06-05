@@ -10,7 +10,7 @@ export function _injectDropdownStyles() {
   margin: 0;
   min-width: max-content;
   list-style: none;
-  padding: 0.3rem 0;
+  padding: 0;
   background: #fff;
   border: 1px solid #E2E8F0;
   border-radius: 8px;
