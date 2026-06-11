@@ -32,7 +32,7 @@ Native browser validation popups are disabled automatically (`novalidate` is set
 | Attribute | Type | Default | Description |
 |-----------|------|---------|-------------|
 | `validate` | boolean attr | *required* | Enables form-level validation and creates `$form` context |
-| `validate-on` | string | `"input focusout"` | Space-separated list of events that trigger validation (form-wide default) |
+| `validate-on` | string | `"input change focusout"` | Space-separated list of events that trigger validation (form-wide default) |
 | `error-class` | string | — | CSS class applied to invalid fields (form-wide default, overridden per-field) |
 
 ---
@@ -158,10 +158,11 @@ Control when validation runs and errors become visible.
 | Trigger | Behavior |
 |---------|----------|
 | `input` | Validates on every keystroke |
+| `change` | Validates when the field value is committed (e.g., select change, checkbox toggle, date picker close) |
 | `focusout` / `blur` | Validates when the field loses focus |
 | `submit` | Validates only on form submission |
 
-The default triggers are `input` and `focusout`. When `validate-on` is set on the form, it applies to all fields unless overridden per-field.
+The default triggers are `input`, `change`, and `focusout`. When `validate-on` is set on the form, it applies to all fields unless overridden per-field.
 
 Regardless of the `validate-on` setting, `$form.valid` always reflects the real-time validity of the form (for submit button state). The trigger only controls when error messages and `error-class` become visible.
 

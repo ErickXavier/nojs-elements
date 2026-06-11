@@ -135,9 +135,16 @@ Inside any `stepper` container, the `$stepper` object is available in expression
 | Event | `$event.detail` | Description |
 |-------|-----------------|-------------|
 | `step-change` | `{ current, total }` | Dispatched on the stepper element whenever the active step changes |
+| `step-complete` | `{ current, total }` | Dispatched when `$stepper.next()` is called on the last step (i.e., the stepper is "finished") |
 
 ```html
 <div stepper on:step-change="console.log('Step', $event.detail.current + 1)">
+  <div step>Step 1</div>
+  <div step>Step 2</div>
+</div>
+
+<!-- Listen for stepper completion -->
+<div stepper on:step-complete="console.log('All', $event.detail.total, 'steps done')">
   <div step>Step 1</div>
   <div step>Step 2</div>
 </div>

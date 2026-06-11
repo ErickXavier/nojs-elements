@@ -81,6 +81,38 @@
 
 ---
 
+## Element-Level Events (`drag`/`drop`)
+
+The `drag` and `drop` directives dispatch CustomEvents on their host elements at each stage of the drag-and-drop lifecycle. Listen with `on:<event>`.
+
+| Event | Bubbles | `$event.detail` | Description |
+|-------|---------|-----------------|-------------|
+| `drag-start` | yes | `{ item, index, el }` | Fired on the `[drag]` element when a drag begins |
+| `drag-end` | yes | `{ item, index, dropped }` | Fired on the `[drag]` element when the drag ends. `dropped` is `true` if the item was successfully dropped |
+| `drag-enter` | no | `{ item, type }` | Fired on the `[drop]` zone when a valid draggable enters it |
+| `drag-leave` | no | `{ item }` | Fired on the `[drop]` zone when the draggable leaves |
+| `drag-over` | no | `{ item, index }` | Fired on a sortable `[drop]` zone as the item moves over it. `index` is the current insertion position |
+| `drop` | no | `{ item, index, source, target, effect }` | Fired on the `[drop]` zone after the drop expression executes. `source`/`target` contain `{ list, index, el }` |
+
+```html
+<!-- React to drag lifecycle -->
+<div drag="task"
+     on:drag-start="console.log('Started dragging', $event.detail.item)"
+     on:drag-end="console.log('Dropped?', $event.detail.dropped)">
+  Drag me
+</div>
+
+<div drop="items = [...items, $drag]"
+     drop-accept="default"
+     on:drag-enter="console.log('Item entered zone')"
+     on:drag-leave="console.log('Item left zone')"
+     on:drop="console.log('Dropped!', $event.detail.item)">
+  Drop here
+</div>
+```
+
+---
+
 ## `drag-list` — Sortable List
 
 High-level shorthand for sortable lists bound to arrays. Combines `each` + `drag` + `drop` in one element.
