@@ -189,6 +189,35 @@ function _buildStackGhost(sourceEl, count) {
   return ghost;
 }
 
+// ── Shared aria-live region singleton for DnD announcements (WCAG 4.1.3) ──
+let _liveRegion = null;
+
+function _getOrCreateLiveRegion() {
+  if (_liveRegion && _liveRegion.isConnected) return _liveRegion;
+  if (typeof document === "undefined" || !document.body) return null;
+  _liveRegion = document.createElement("div");
+  _liveRegion.setAttribute("aria-live", "assertive");
+  _liveRegion.setAttribute("aria-atomic", "true");
+  _liveRegion.setAttribute("role", "status");
+  _liveRegion.className = "nojs-dnd-live-region";
+  _liveRegion.style.cssText =
+    "position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;padding:0;margin:-1px;";
+  document.body.appendChild(_liveRegion);
+  return _liveRegion;
+}
+
+function _announce(message) {
+  const region = _getOrCreateLiveRegion();
+  if (!region) return;
+  // Clear then set: forces screen readers to re-announce even if text is identical
+  region.textContent = "";
+  if (typeof requestAnimationFrame !== "undefined") {
+    requestAnimationFrame(() => { region.textContent = message; });
+  } else {
+    region.textContent = message;
+  }
+}
+
 // ═══════════════════════════════════════════════════════════════════════
 //  DRAG DIRECTIVE
 // ═══════════════════════════════════════════════════════════════════════
@@ -214,8 +243,9 @@ export function registerDrag(NoJS) {
       // Set draggable
       el.draggable = true;
 
-      // Accessibility
-      el.setAttribute("aria-grabbed", "false");
+      // Accessibility (WCAG 4.1.2 — aria-grabbed is deprecated, use aria-roledescription)
+      el.setAttribute("aria-roledescription", "draggable item");
+      if (!el.getAttribute("role")) el.setAttribute("role", "button");
       if (!el.getAttribute("tabindex")) el.setAttribute("tabindex", "0");
 
       // Handle restriction: prevent drag from non-handle areas
@@ -310,12 +340,13 @@ export function registerDrag(NoJS) {
           }
         }
 
-        // ARIA
-        el.setAttribute("aria-grabbed", "true");
+        // Screen reader announcement (WCAG 4.1.3)
+        const dragLabel = el.getAttribute("aria-label") || el.textContent?.trim()?.slice(0, 50) || "Item";
+        _announce(`Grabbed ${dragLabel}. Use arrow keys to move.`);
 
         // Dispatch custom event
         el.dispatchEvent(
-          new CustomEvent("drag-start", {
+          new CustomEvent("nojs:dnd-start", {
             bubbles: true,
             detail: { item: dragItem, index: _dndState.dragging.sourceIndex, el },
           })
@@ -333,9 +364,6 @@ export function registerDrag(NoJS) {
           }
         }
 
-        // ARIA
-        el.setAttribute("aria-grabbed", "false");
-
         // Ghost class cleanup
         if (ghostClass && imageSel && imageSel !== "none") {
           const imgEl = el.querySelector(imageSel);
@@ -344,7 +372,7 @@ export function registerDrag(NoJS) {
 
         // Dispatch custom event
         el.dispatchEvent(
-          new CustomEvent("drag-end", {
+          new CustomEvent("nojs:dnd-end", {
             bubbles: true,
             detail: {
               item: _dndState.dragging?.item,
@@ -371,8 +399,8 @@ export function registerDrag(NoJS) {
         function updateDisabled() {
           const disabled = !!NoJS.evaluate(disabledExpr, ctx);
           el.draggable = !disabled;
-          if (disabled) el.removeAttribute("aria-grabbed");
-          else el.setAttribute("aria-grabbed", "false");
+          if (disabled) el.removeAttribute("aria-roledescription");
+          else el.setAttribute("aria-roledescription", "draggable item");
         }
         const unwatchDisabled = ctx.$watch(updateDisabled);
         addDisposer(el, unwatchDisabled);
@@ -398,9 +426,10 @@ export function registerDrag(NoJS) {
             listDirective: null,
           };
           dragClass.split(/\s+/).filter(Boolean).forEach((c) => el.classList.add(c));
-          el.setAttribute("aria-grabbed", "true");
+          const kbLabel = el.getAttribute("aria-label") || el.textContent?.trim()?.slice(0, 50) || "Item";
+          _announce(`Grabbed ${kbLabel}. Use arrow keys to move.`);
           el.dispatchEvent(
-            new CustomEvent("drag-start", {
+            new CustomEvent("nojs:dnd-start", {
               bubbles: true,
               detail: { item, index: null, el },
             })
@@ -408,7 +437,7 @@ export function registerDrag(NoJS) {
         } else if (e.key === "Escape" && _dndState.dragging && _dndState.dragging.sourceEl === el) {
           e.preventDefault();
           dragClass.split(/\s+/).filter(Boolean).forEach((c) => el.classList.remove(c));
-          el.setAttribute("aria-grabbed", "false");
+          _announce("Drag cancelled.");
           _dndState.dragging = null;
           _removePlaceholder();
         }
@@ -482,7 +511,7 @@ export function registerDrop(NoJS) {
           }
           // Dispatch throttled drag-over event
           el.dispatchEvent(
-            new CustomEvent("drag-over", {
+            new CustomEvent("nojs:dnd-over", {
               bubbles: false,
               detail: { item: _dndState.dragging.item, index: idx },
             })
@@ -507,7 +536,7 @@ export function registerDrop(NoJS) {
           if (typeOk && maxOk) {
             dropClass.split(/\s+/).filter(Boolean).forEach((c) => el.classList.add(c));
             el.dispatchEvent(
-              new CustomEvent("drag-enter", {
+              new CustomEvent("nojs:dnd-enter", {
                 bubbles: false,
                 detail: { item: _dndState.dragging.item, type: _dndState.dragging.type },
               })
@@ -529,7 +558,7 @@ export function registerDrop(NoJS) {
           _removePlaceholder();
 
           el.dispatchEvent(
-            new CustomEvent("drag-leave", {
+            new CustomEvent("nojs:dnd-leave", {
               bubbles: false,
               detail: { item: _dndState.dragging.item },
             })
@@ -597,7 +626,7 @@ export function registerDrop(NoJS) {
 
         // Dispatch custom event after expression runs
         el.dispatchEvent(
-          new CustomEvent("drop", {
+          new CustomEvent("nojs:dnd-drop", {
             bubbles: false,
             detail: {
               item: dragItem,
@@ -730,7 +759,7 @@ export function registerDragList(NoJS) {
           const dragEl = wrapper.firstElementChild || wrapper;
           dragEl.draggable = true;
           dragEl.setAttribute("role", "option");
-          dragEl.setAttribute("aria-grabbed", "false");
+          dragEl.setAttribute("aria-roledescription", "draggable item");
           if (!dragEl.getAttribute("tabindex")) dragEl.setAttribute("tabindex", "0");
 
           // Per-item drag handlers (on wrapper so events from dragEl bubble up to them)
@@ -754,10 +783,11 @@ export function registerDragList(NoJS) {
               e.dataTransfer.setData("text/plain", "");
             }
             dragClass.split(/\s+/).filter(Boolean).forEach((c) => dragEl.classList.add(c));
-            dragEl.setAttribute("aria-grabbed", "true");
+            const dlItemLabel = dragEl.getAttribute("aria-label") || dragEl.textContent?.trim()?.slice(0, 50) || "Item";
+            _announce(`Grabbed ${dlItemLabel}. Use arrow keys to reorder.`);
 
             el.dispatchEvent(
-              new CustomEvent("drag-start", {
+              new CustomEvent("nojs:dnd-start", {
                 bubbles: true,
                 detail: { item, index: i, el: dragEl },
               })
@@ -766,7 +796,6 @@ export function registerDragList(NoJS) {
 
           const itemDragend = () => {
             dragClass.split(/\s+/).filter(Boolean).forEach((c) => dragEl.classList.remove(c));
-            dragEl.setAttribute("aria-grabbed", "false");
 
             // If drag-list-remove and item was NOT dropped in a target, no action
             // If dragging state is still set, it wasn't dropped
@@ -798,17 +827,18 @@ export function registerDragList(NoJS) {
                 listDirective: { el, listPath, ctx, keyProp, copyMode, removeMode },
               };
               dragClass.split(/\s+/).filter(Boolean).forEach((c) => dragEl.classList.add(c));
-              dragEl.setAttribute("aria-grabbed", "true");
+              const kbDlItemLabel = dragEl.getAttribute("aria-label") || dragEl.textContent?.trim()?.slice(0, 50) || "Item";
+              _announce(`Grabbed ${kbDlItemLabel}. Use arrow keys to reorder.`);
             } else if (e.key === "Escape" && _dndState.dragging) {
               e.preventDefault();
               e.stopPropagation();
               // Reset the grabbed item's visual state. Resolve by the live DOM
-              // (aria-grabbed="true" within this list) so a re-render that swapped
-              // the wrapper between grab and cancel can't strand the grabbed flag.
+              // (nojs-dragging class within this list) so a re-render that swapped
+              // the wrapper between grab and cancel can't strand the dragging flag.
               const grabbedEl =
-                el.querySelector('[aria-grabbed="true"]') || dragEl;
+                el.querySelector(`.${dragClass.split(/\s+/)[0]}`) || dragEl;
               dragClass.split(/\s+/).filter(Boolean).forEach((c) => grabbedEl.classList.remove(c));
-              grabbedEl.setAttribute("aria-grabbed", "false");
+              _announce("Reorder cancelled.");
               _dndState.dragging = null;
               _removePlaceholder();
             } else if ((e.key === "ArrowDown" || e.key === "ArrowRight") && _dndState.dragging && _dndState.dragging.sourceEl === wrapper) {
@@ -818,6 +848,9 @@ export function registerDragList(NoJS) {
               if (nextWrapper) {
                 const nextEl = nextWrapper.firstElementChild || nextWrapper;
                 nextEl.focus();
+                const siblings = [...el.children].filter(c => !c.classList.contains("nojs-drop-placeholder"));
+                const pos = siblings.indexOf(nextWrapper) + 1;
+                _announce(`Moved to position ${pos} of ${siblings.length}.`);
               }
             } else if ((e.key === "ArrowUp" || e.key === "ArrowLeft") && _dndState.dragging && _dndState.dragging.sourceEl === wrapper) {
               e.preventDefault();
@@ -825,6 +858,9 @@ export function registerDragList(NoJS) {
               if (prevWrapper) {
                 const prevEl = prevWrapper.firstElementChild || prevWrapper;
                 prevEl.focus();
+                const siblings = [...el.children].filter(c => !c.classList.contains("nojs-drop-placeholder"));
+                const pos = siblings.indexOf(prevWrapper) + 1;
+                _announce(`Moved to position ${pos} of ${siblings.length}.`);
               }
             }
           };
@@ -894,7 +930,7 @@ export function registerDragList(NoJS) {
           if (typeOk && maxOk) {
             dropClass.split(/\s+/).filter(Boolean).forEach((c) => el.classList.add(c));
             el.dispatchEvent(
-              new CustomEvent("drag-enter", {
+              new CustomEvent("nojs:dnd-enter", {
                 bubbles: false,
                 detail: { item: _dndState.dragging.item, type: _dndState.dragging.type },
               })
@@ -914,7 +950,7 @@ export function registerDragList(NoJS) {
           rejectClass.split(/\s+/).filter(Boolean).forEach((c) => el.classList.remove(c));
           _removePlaceholder();
           el.dispatchEvent(
-            new CustomEvent("drag-leave", {
+            new CustomEvent("nojs:dnd-leave", {
               bubbles: false,
               detail: { item: _dndState.dragging?.item },
             })
@@ -975,7 +1011,7 @@ export function registerDragList(NoJS) {
           ctx.$set(listPath, newTargetList);
 
           el.dispatchEvent(
-            new CustomEvent("reorder", {
+            new CustomEvent("nojs:dnd-reorder", {
               bubbles: true,
               detail: { list: newTargetList, item: dragItem, from: sourceIndex, to: insertAt },
             })
@@ -994,7 +1030,7 @@ export function registerDragList(NoJS) {
               sourceInfo.ctx.$set(sourceInfo.listPath, newSourceList);
 
               sourceInfo.el.dispatchEvent(
-                new CustomEvent("remove", {
+                new CustomEvent("nojs:dnd-remove", {
                   bubbles: true,
                   detail: { list: newSourceList, item: dragItem, index: sourceIndex },
                 })
@@ -1003,7 +1039,7 @@ export function registerDragList(NoJS) {
           }
 
           el.dispatchEvent(
-            new CustomEvent("receive", {
+            new CustomEvent("nojs:dnd-receive", {
               bubbles: true,
               detail: {
                 list: newTargetList,
@@ -1014,6 +1050,13 @@ export function registerDragList(NoJS) {
             })
           );
         }
+
+        // Announce drop for screen readers (WCAG 4.1.3)
+        const dlDropLabel =
+          (_dndState.dragging?.sourceEl?.firstElementChild?.getAttribute("aria-label") ||
+           _dndState.dragging?.sourceEl?.firstElementChild?.textContent?.trim()?.slice(0, 50)) || "Item";
+        const finalPos = isSameList ? (sourceIndex < dropIndex ? dropIndex : dropIndex + 1) : dropIndex + 1;
+        _announce(`Dropped ${dlDropLabel} at position ${finalPos}.`);
 
         // Settle animation (apply to visible child, not display:contents wrapper)
         requestAnimationFrame(() => {

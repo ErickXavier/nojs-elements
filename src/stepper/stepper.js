@@ -240,12 +240,23 @@ export function registerStepper(NoJS) {
           nextBtn.textContent = current === steps.length - 1 ? "Finish" : "Next";
         }
 
+        // Focus management: move focus to new step content (WCAG 2.4.3)
+        // Step panels have tabindex="0" from step.js, enabling programmatic focus.
+        // Skip on initial render to avoid stealing focus on page load.
+        if (!isInitial) {
+          const activeStep = steps[current];
+          if (activeStep) {
+            // Use requestAnimationFrame to ensure inert is removed first
+            requestAnimationFrame(() => activeStep.focus());
+          }
+        }
+
         // Dispatch step-change event. The initial render fires a
         // non-bubbling event so direct listeners still observe the starting
         // step, but ancestors do not receive a spurious change event before
         // any user interaction.
         el.dispatchEvent(
-          new CustomEvent("step-change", {
+          new CustomEvent("nojs:stepper-change", {
             bubbles: !isInitial,
             detail: { current, total: steps.length },
           })
@@ -260,7 +271,7 @@ export function registerStepper(NoJS) {
         if (current >= steps.length - 1) {
           if (mode === "linear" && !_validateStep(current)) return false;
           el.dispatchEvent(
-            new CustomEvent("step-complete", {
+            new CustomEvent("nojs:stepper-complete", {
               bubbles: true,
               detail: { current, total: steps.length },
             })

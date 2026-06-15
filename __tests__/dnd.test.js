@@ -249,9 +249,10 @@ describe('Drag Directive', () => {
     expect(el.draggable).toBe(true);
   });
 
-  test('19 - sets aria-grabbed=false initially', () => {
+  test('19 - sets aria-roledescription initially (WCAG: aria-grabbed deprecated)', () => {
     const { el } = setupDrag("'test'");
-    expect(el.getAttribute('aria-grabbed')).toBe('false');
+    expect(el.getAttribute('aria-roledescription')).toBe('draggable item');
+    expect(el.getAttribute('aria-grabbed')).toBeNull();
   });
 
   test('20 - adds tabindex=0 for keyboard access', () => {
@@ -278,19 +279,20 @@ describe('Drag Directive', () => {
     expect(el.classList.contains('nojs-dragging')).toBe(true);
   });
 
-  test('23 - dragstart sets aria-grabbed=true', () => {
+  test('23 - dragstart preserves aria-roledescription (no aria-grabbed)', () => {
     const { el } = setupDrag("'test'");
     const evt = new Event('dragstart', { bubbles: true });
     evt.dataTransfer = { effectAllowed: '', setData: jest.fn() };
     el.dispatchEvent(evt);
 
-    expect(el.getAttribute('aria-grabbed')).toBe('true');
+    expect(el.getAttribute('aria-roledescription')).toBe('draggable item');
+    expect(el.getAttribute('aria-grabbed')).toBeNull();
   });
 
   test('24 - dragstart dispatches drag-start custom event', () => {
     const { el } = setupDrag("'test'");
     const handler = jest.fn();
-    el.addEventListener('drag-start', handler);
+    el.addEventListener('nojs:dnd-start', handler);
 
     const evt = new Event('dragstart', { bubbles: true });
     evt.dataTransfer = { effectAllowed: '', setData: jest.fn() };
@@ -312,13 +314,13 @@ describe('Drag Directive', () => {
     // End drag
     el.dispatchEvent(new Event('dragend', { bubbles: true }));
     expect(el.classList.contains('nojs-dragging')).toBe(false);
-    expect(el.getAttribute('aria-grabbed')).toBe('false');
+    expect(el.getAttribute('aria-grabbed')).toBeNull();
   });
 
   test('26 - dragend dispatches drag-end custom event', () => {
     const { el } = setupDrag("'test'");
     const handler = jest.fn();
-    el.addEventListener('drag-end', handler);
+    el.addEventListener('nojs:dnd-end', handler);
 
     const startEvt = new Event('dragstart', { bubbles: true });
     startEvt.dataTransfer = { effectAllowed: '', setData: jest.fn() };
@@ -343,7 +345,7 @@ describe('Drag Directive', () => {
     el.dispatchEvent(new KeyboardEvent('keydown', { key: ' ', bubbles: true }));
 
     expect(_dndState.dragging).toBeTruthy();
-    expect(el.getAttribute('aria-grabbed')).toBe('true');
+    expect(el.getAttribute('aria-grabbed')).toBeNull();
     expect(el.classList.contains('nojs-dragging')).toBe(true);
   });
 
@@ -354,7 +356,7 @@ describe('Drag Directive', () => {
 
     el.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
     expect(_dndState.dragging).toBeNull();
-    expect(el.getAttribute('aria-grabbed')).toBe('false');
+    expect(el.getAttribute('aria-grabbed')).toBeNull();
     expect(el.classList.contains('nojs-dragging')).toBe(false);
   });
 });
@@ -416,7 +418,7 @@ describe('Drop Directive', () => {
   test('35 - dragleave dispatches drag-leave custom event', () => {
     const { el } = setupDrop();
     const handler = jest.fn();
-    el.addEventListener('drag-leave', handler);
+    el.addEventListener('nojs:dnd-leave', handler);
 
     _dndState.dragging = { item: 'x', type: 'default', effect: 'move', sourceEl: document.createElement('div') };
 
@@ -431,7 +433,7 @@ describe('Drop Directive', () => {
     _dndState.dragging = { item: 'x', type: 'default', effect: 'move', sourceEl: document.createElement('div') };
 
     const handler = jest.fn();
-    el.addEventListener('drop', handler);
+    el.addEventListener('nojs:dnd-drop', handler);
 
     el.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
     // The drop handler runs, clears dragging state
@@ -473,7 +475,7 @@ describe('Drag-List Directive', () => {
     const options = el.querySelectorAll('[role="option"]');
     for (const dragEl of options) {
       expect(dragEl.draggable).toBe(true);
-      expect(dragEl.getAttribute('aria-grabbed')).toBe('false');
+      expect(dragEl.getAttribute('aria-roledescription')).toBe('draggable item');
     }
   });
 

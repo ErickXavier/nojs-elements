@@ -96,7 +96,7 @@ function _closeDetails(details, useFallback) {
 
 // ─── Dispatch accordion-change event ────────────────────────────────
 function _dispatchChange(container, details, open, index) {
-  const event = new CustomEvent("accordion-change", {
+  const event = new CustomEvent("nojs:accordion-change", {
     bubbles: true,
     detail: { element: details, open, index },
   });
@@ -151,15 +151,43 @@ export function registerAccordionDirective(NoJS) {
       });
       observer.observe(el, { childList: true });
 
+      // ── Unique ID counter for accordion panels ──
+      let _panelIdSeq = 0;
+
       // ─── Setup a single <details> element ─────────────────────
       const _setupDetails = (details) => {
         if (useFallback) {
           _wrapContent(details);
         }
 
+        // ARIA: aria-expanded + aria-controls on <summary> (WCAG 4.1.2)
+        const summary = details.querySelector(":scope > summary");
+        if (summary) {
+          // Ensure the content has an id for aria-controls
+          let panelId = `nojs-accordion-panel-${Date.now()}-${_panelIdSeq++}`;
+          const contentWrapper = details.querySelector(":scope > .nojs-accordion-content");
+          if (contentWrapper) {
+            contentWrapper.id = contentWrapper.id || panelId;
+            contentWrapper.setAttribute("role", "region");
+            panelId = contentWrapper.id;
+          } else {
+            // No wrapper (native animation path) — use details as the controlled element
+            if (!details.id) details.id = panelId;
+            panelId = details.id;
+          }
+          summary.setAttribute("aria-expanded", details.open ? "true" : "false");
+          summary.setAttribute("aria-controls", panelId);
+        }
+
         const toggleHandler = (e) => {
           const currentDetails = _getDirectDetails(el);
           const idx = currentDetails.indexOf(details);
+
+          // Update aria-expanded on toggle (WCAG 4.1.2)
+          const toggledSummary = details.querySelector(":scope > summary");
+          if (toggledSummary) {
+            toggledSummary.setAttribute("aria-expanded", details.open ? "true" : "false");
+          }
 
           if (details.open) {
             // In single mode, close all siblings
@@ -186,6 +214,7 @@ export function registerAccordionDirective(NoJS) {
               const wrapper = details.querySelector(":scope > .nojs-accordion-content");
               if (details.open) {
                 _animateClose(details, wrapper);
+                summary.setAttribute("aria-expanded", "false");
                 _dispatchChange(el, details, false, _getDirectDetails(el).indexOf(details));
                 // In single mode, nothing extra to do when closing
               } else {
@@ -195,10 +224,14 @@ export function registerAccordionDirective(NoJS) {
                   for (const sibling of currentDetails) {
                     if (sibling !== details && sibling.open) {
                       _closeDetails(sibling, true);
+                      // Update aria-expanded on closed sibling
+                      const sibSummary = sibling.querySelector(":scope > summary");
+                      if (sibSummary) sibSummary.setAttribute("aria-expanded", "false");
                     }
                   }
                 }
                 _animateOpen(details, wrapper);
+                summary.setAttribute("aria-expanded", "true");
                 _dispatchChange(el, details, true, _getDirectDetails(el).indexOf(details));
               }
             };
