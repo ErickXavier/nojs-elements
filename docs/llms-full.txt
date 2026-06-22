@@ -48,7 +48,7 @@ Add both script tags to your HTML — NoJS Core first, then Elements:
 
 ```html
 <script src="https://cdn.no-js.dev/"></script>
-<script src="https://cdn.no-js.dev/elements"></script>
+<script src="https://cdn-elements.no-js.dev/"></script>
 <!-- That's it — all elements are ready to use -->
 ```
 
@@ -84,7 +84,7 @@ This plugin requires **No.JS >= 1.13.0** as a peer dependency.
 
 # Drag and Drop
 
-> The DnD module is included in NoJS Elements. When using the CDN, it is auto-installed — no separate registration is needed. For ESM usage, call `NoJS.use(NoJSElements)` once.
+> The DnD module is included in NoJS Elements. When using the CDN, it is auto-installed — no separate registration is needed.
 
 ## `drag` — Make an Element Draggable
 
@@ -342,7 +342,7 @@ No.JS automatically adds:
 
 # Validation
 
-> The Validation module is included in NoJS Elements. When using the CDN, it is auto-installed — no separate registration is needed. For ESM usage, call `NoJS.use(NoJSElements)` once.
+> The Validation module is included in NoJS Elements. When using the CDN, it is auto-installed — no separate registration is needed.
 
 ## `<form validate>` — Form-Level Validation
 

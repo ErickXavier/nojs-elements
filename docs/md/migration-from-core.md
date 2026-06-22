@@ -59,7 +59,7 @@ Both packages must be at version 1.13.0 or later. Earlier versions of NoJS Eleme
 
 ```html
 <script src="https://cdn.no-js.dev/"></script>
-<script src="https://cdn.no-js.dev/elements/"></script>
+<script src="https://cdn-elements.no-js.dev/"></script>
 
 <form validate>
   <input name="email" validate="required|email" />

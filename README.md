@@ -14,7 +14,7 @@ Add both script tags to your HTML — NoJS Core first, then Elements:
 
 ```html
 <script src="https://cdn.no-js.dev/"></script>
-<script src="https://cdn.no-js.dev/elements"></script>
+<script src="https://cdn-elements.no-js.dev/"></script>
 <!-- That's it — all elements are ready to use -->
 ```
 
@@ -107,7 +107,7 @@ This plugin requires **No.JS >= 1.13.0** as a peer dependency.
 
 Detailed documentation for each element is available in [`docs/md/`](docs/md/).
 
-For the full directive reference with all attributes, events, CSS classes, and accessibility details, see the [NoJS-Skill directive reference](https://github.com/no-js-dev/nojs-skill/blob/main/references/directives.md#drag-and-drop).
+For the full directive reference with all attributes, events, CSS classes, and accessibility details, see the [NoJS-Skill element references](https://github.com/no-js-dev/nojs-skill/blob/main/nojs/references/elements/).
 
 ---
 
