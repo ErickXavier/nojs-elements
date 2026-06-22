@@ -76,53 +76,6 @@ The CDN build of NoJS Elements auto-installs when it detects `window.NoJS`. No J
 
 ---
 
-## npm / ESM Users
-
-### Before (Core only)
-
-```javascript
-import NoJS from '@no-js-dev/nojs';
-
-NoJS.config({ /* ... */ });
-NoJS.init();
-```
-
-### After (Core + Elements)
-
-```bash
-npm install @no-js-dev/nojs-elements
-```
-
-```javascript
-import NoJS from '@no-js-dev/nojs';
-import NoJSElements from '@no-js-dev/nojs-elements';
-
-NoJS.config({ /* ... */ });
-NoJS.use(NoJSElements);
-NoJS.init();
-```
-
-**Order matters:** `NoJS.use(NoJSElements)` must be called before `NoJS.init()`.
-
----
-
-## CJS / require() Users
-
-```bash
-npm install @no-js-dev/nojs-elements
-```
-
-```javascript
-const NoJS = require('@no-js-dev/nojs');
-const NoJSElements = require('@no-js-dev/nojs-elements');
-
-NoJS.config({ /* ... */ });
-NoJS.use(NoJSElements);
-NoJS.init();
-```
-
----
-
 ## HTML Templates — No Changes Required
 
 Your HTML templates are 100% backward compatible. Every directive attribute, implicit variable, CSS class, and event works exactly as before:
