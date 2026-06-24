@@ -5,7 +5,17 @@ All notable changes to **NoJS Elements** will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/no-js-dev/nojs-elements/compare/v1.15.4...HEAD)
+## [Unreleased](https://github.com/no-js-dev/nojs-elements/compare/v1.15.5...HEAD)
+
+## [1.15.5](https://github.com/no-js-dev/nojs-elements/compare/v1.15.4...v1.15.5) — 2026-06-24
+
+### Removed
+
+- Removed npm distribution config (.npmignore, --legacy-peer-deps)
+
+### Changed
+
+- Clarified CDN-only distribution model
 
 ## [1.15.4](https://github.com/no-js-dev/nojs-elements/compare/v1.15.3...v1.15.4) — 2026-06-22
 
