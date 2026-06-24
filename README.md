@@ -127,6 +127,7 @@ For the full directive reference with all attributes, events, CSS classes, and a
 Contributions are welcome! Please open an issue or submit a pull request.
 
 ```bash
+# Development (source builds only — end users load via CDN)
 npm install            # install dependencies
 npm run build          # esbuild → dist/{iife,esm,cjs}/nojs-elements.js
 npm test               # Jest unit tests

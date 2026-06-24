@@ -1,6 +1,6 @@
 {
   "name": "@no-js-dev/nojs-elements",
-  "version": "1.15.4",
+  "version": "1.15.5",
   "description": "Element plugins for No.JS — drag-and-drop, validation, and more",
   "main": "dist/cjs/nojs-elements.js",
   "module": "dist/esm/nojs-elements.js",
@@ -31,21 +31,12 @@
     "./validate": "./src/validate/index.js",
     "./virtual-list": "./src/virtual-list/index.js"
   },
-  "files": [
-    "dist/",
-    "src/",
-    "LICENSE"
-  ],
   "scripts": {
     "build": "node build.js",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:verbose": "jest --verbose",
-    "start": "node docs/dev-server.js",
-    "prepublishOnly": "npm run build"
-  },
-  "peerDependencies": {
-    "@no-js-dev/nojs": ">=1.13.0 <2.0.0"
+    "start": "node docs/dev-server.js"
   },
   "devDependencies": {
     "@babel/core": "^7.29.7",
